@@ -2,35 +2,6 @@
 <html lang="en">
 <head>
 <script>
-let ANTHROPIC_API_KEY = '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';
-function updateApiKey(v){ ANTHROPIC_API_KEY = v.trim(); }
-function saveApiKey(){
-  const v=document.getElementById('apiKeyInput').value.trim();
-  if(!v){alert('Please enter your API key.');return;}
-  ANTHROPIC_API_KEY=v;
-  try{sessionStorage.setItem('mad_api_key',v);}catch(e){}
-  document.getElementById('apiKeyStatus').textContent='✅ Key saved for this session';
-  document.getElementById('apiKeyStatus').style.color='#00BF91';
-}
-function getApiHeaders(){
-  return {"Content-Type":"application/json","anthropic-version":"2023-06-01","x-api-key":ANTHROPIC_API_KEY};
-}
-function updateCity(){
-  const c=document.getElementById('pCountry').value;
-  const m={'Cameroon':'Yaoundé, Douala, Bamenda…','Kenya':'Nairobi, Mombasa, Kisumu…','Nigeria':'Lagos, Abuja, Port Harcourt…','Ghana':'Accra, Kumasi, Tamale…','South Africa':'Johannesburg, Cape Town, Durban…','Uganda':'Kampala, Entebbe, Gulu…','Tanzania':'Dar es Salaam, Arusha…','Ethiopia':'Addis Ababa, Dire Dawa…','Rwanda':'Kigali, Butare…'};
-  const cityEl=document.getElementById('pCity');
-  if(cityEl&&m[c])cityEl.placeholder=m[c];
-}
-(function(){
-  try{
-    const k=sessionStorage.getItem('mad_api_key');
-    if(k){ANTHROPIC_API_KEY=k;document.addEventListener('DOMContentLoaded',()=>{
-      const inp=document.getElementById('apiKeyInput');if(inp)inp.value=k;
-      const st=document.getElementById('apiKeyStatus');if(st){st.textContent='✅ Key loaded';st.style.color='#00BF91';}
-    });}
-  }catch(e){}
-})();
-
 function togglePanel(bodyId,arrowId){
   const b=document.getElementById(bodyId),a=document.getElementById(arrowId);
   const open=b.style.display!=='none';
@@ -339,21 +310,6 @@ footer .fCopy strong{color:var(--gold2);}
 </style>
 </head>
 <body>
-<!-- API KEY BANNER -->
-<div id="apiKeyBanner" style="background:#1a1c20;border-bottom:2px solid #F0A500;padding:.7rem 1.5rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;position:sticky;top:0;z-index:600;">
-  <span style="font-size:.8rem;color:#F7C84A;font-weight:700;white-space:nowrap;">🔑 Anthropic API Key required for AI features:</span>
-  <input id="apiKeyInput" type="password" placeholder="sk-ant-…" autocomplete="off"
-    style="flex:1;min-width:220px;max-width:380px;padding:.38rem .85rem;border-radius:8px;border:1.5px solid rgba(240,165,0,.4);background:#0d0e10;color:#fff;font-size:.82rem;font-family:sans-serif;"
-    oninput="updateApiKey(this.value)">
-  <button onclick="saveApiKey()" style="background:linear-gradient(135deg,#FF4500,#F0A500);color:#fff;border:none;border-radius:8px;padding:.38rem 1rem;font-size:.8rem;font-weight:700;cursor:pointer;">Save</button>
-  <span id="apiKeyStatus" style="font-size:.75rem;color:#aaa;"></span>
-  <a href="https://console.anthropic.com/account/keys" target="_blank" style="font-size:.72rem;color:rgba(240,165,0,.7);text-decoration:underline;white-space:nowrap;">Get a free key ↗</a>
-  <button onclick="document.getElementById('apiKeyBanner').style.display='none'" style="background:none;border:none;color:#555;cursor:pointer;font-size:1.1rem;margin-left:auto;">✕</button>
-</div>
-
-<!-- TOPBAR -->
-<div class="topbar">🌍 MaDskillz T21 by <strong>Team21 Academy</strong> — <em>Make a Difference</em> &nbsp;·&nbsp; <a href="https://wa.me/237694294406" target="_blank">💬 WhatsApp Team21</a> &nbsp;·&nbsp; <a href="/cdn-cgi/l/email-protection#e09485818dd2d18f8e8c898e85a0878d81898cce838f8d">✉️ <span class="__cf_email__" data-cfemail="93e7f6f2fea1a2fcfdfffafdf6d3f4fef2faffbdf0fcfe">[email&#160;protected]</span></a></div>
-
 <!-- NAV -->
 <nav>
   <a class="navBrand" onclick="goto('profile')">
@@ -984,32 +940,103 @@ function clearCVUpload(){
 // CV ANALYSIS
 // ═══════════════════════════════════════════════
 async function analyzeCV(){
-  if(!ANTHROPIC_API_KEY){alert('Please enter your Anthropic API key in the yellow bar at the top.\n\nGet a free key at: https://console.anthropic.com/account/keys');document.getElementById('apiKeyInput').focus();return;}
   const hasPdf=!!profPdfB64, hasTxt=profText&&profText!=='__PDF__';
   if(!hasPdf&&!hasTxt){alert('Please upload a CV file first.');return;}
-  const btn=document.getElementById('analyzeBtn');
-  btn.disabled=true;btn.textContent='⏳ Analyzing…';
-  const out=document.getElementById('cvAnalysisOut');
-  out.innerHTML='<div class="spinWrap"><div class="spinner"></div><div class="spinLbl">AI is reading your CV…</div><div class="spinSub">Scoring · Gap analysis · Job matching · Rewriting weak sections</div></div>';
-  out.scrollIntoView({behavior:'smooth'});
-  const prompt=`You are a senior career coach at Team21 Academy MaDskillz. Analyze the provided CV thoroughly.
-Return ONLY valid JSON (no markdown, no preamble):
-{"name":"candidate name or Unknown","score":72,"scoreLabel":"Good but improvable","summary":"2-3 honest sentences","strengths":["s1","s2","s3","s4"],"weaknesses":["w1","w2","w3"],"missingKeywords":["k1","k2","k3","k4"],"jobMatches":["Role (sector)","Role","Role","Role","Role"],"upskillRecs":["Course — why it helps","Course — why","Course — why"],"quickWins":["fix1","fix2","fix3"],"rewrittenSummary":"Punchy 3-4 sentence ATS-optimized professional summary"}
-Score 1-100. Be honest, specific and encouraging.`;
-  let messages;
-  if(hasPdf){messages=[{role:"user",content:[{type:"document",source:{type:"base64",media_type:"application/pdf",data:profPdfB64}},{type:"text",text:prompt}]}];}
-  else{messages=[{role:"user",content:prompt+"\n\nCV:\n"+profText}];}
-  try{
-    const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:getApiHeaders(),body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1500,messages})});
-    if(!r.ok)throw new Error('API '+r.status);
-    const d=await r.json();
-    const raw=(d.content||[]).map(b=>b.text||'').join('');
-    let a;try{a=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch{a=fallbackAnalysis();}
-    renderAnalysis(a);
-  }catch(e){
-    out.innerHTML=`<div class="alert aErr">⚠️ Analysis hit an issue (${esc(e.message)}). Please try again or use the form below.</div>`;
+  if(hasPdf&&!hasTxt){
+    renderAnalysis(fallbackAnalysis());
+    return;
   }
-  btn.disabled=false;btn.textContent='🤖 Analyze & Score My CV';
+  const btn=document.getElementById('analyzeBtn');
+  btn.disabled=true; btn.textContent='⏳ Analyzing…';
+  const out=document.getElementById('cvAnalysisOut');
+  out.innerHTML='<div class="spinWrap"><div class="spinner"></div><div class="spinLbl">Analyzing your CV…</div><div class="spinSub">Scoring · Gap analysis · Job matching</div></div>';
+  out.scrollIntoView({behavior:'smooth'});
+
+  // ── Offline analysis engine ──
+  const text = profText || '';
+  const t = text.toLowerCase();
+
+  // Name: first non-empty line that looks like a name
+  let name = 'Your Profile';
+  const lines = text.split('\n').map(l=>l.trim()).filter(Boolean);
+  for(const l of lines){
+    if(l.length>2 && l.length<50 && /^[A-Z][a-z]/.test(l) && !/[@\d:\/]/.test(l)){name=l;break;}
+  }
+
+  // Score based on presence of key sections
+  let score = 40;
+  const has = s => t.includes(s);
+  if(has('summary')||has('objective')||has('profile')) score+=8;
+  if(has('experience')||has('employment')||has('work history')) score+=10;
+  if(has('education')||has('degree')||has('university')||has('college')) score+=8;
+  if(has('skills')||has('competencies')||has('expertise')) score+=8;
+  if(has('@')) score+=4; // email present
+  if(/\+?\d[\d\s\-]{7,}/.test(text)) score+=4; // phone present
+  if(has('linkedin')||has('github')||has('portfolio')) score+=4;
+  if(has('volunteer')||has('certification')||has('award')) score+=4;
+  const bulletCount=(text.match(/^[•\-*]/mg)||[]).length;
+  if(bulletCount>5) score+=6;
+  const numberCount=(text.match(/\d+%|\d+\s*(people|staff|team|projects?|years?|months?|clients?)/gi)||[]).length;
+  if(numberCount>2) score+=8;
+  if(text.length>1500) score+=4;
+  score=Math.min(94,score);
+
+  const scoreLabel = score>=80?'Strong CV — minor tweaks needed':score>=65?'Good foundation — several improvements will boost results':score>=50?'Has potential — needs polish':'Needs significant work — let\'s rebuild it';
+
+  // Strengths
+  const strengths=[];
+  if(has('experience')||has('employment')) strengths.push('Work experience is documented');
+  if(has('education')||has('degree')) strengths.push('Educational background is present');
+  if(has('skills')||has('competencies')) strengths.push('Skills section included');
+  if(bulletCount>3) strengths.push('Uses bullet points for readability');
+  if(numberCount>1) strengths.push('Some quantified achievements present');
+  if(has('@')) strengths.push('Contact information included');
+  while(strengths.length<3) strengths.push('Career history is visible');
+
+  // Weaknesses
+  const weaknesses=[];
+  if(!has('summary')&&!has('objective')&&!has('profile')) weaknesses.push('No professional summary — add 3-4 lines at the top');
+  if(numberCount<2) weaknesses.push('Achievements lack numbers — add metrics & results');
+  if(!has('linkedin')) weaknesses.push('LinkedIn profile URL missing');
+  if(bulletCount<4) weaknesses.push('Too much paragraph text — use bullet points');
+  if(!has('certification')&&!has('course')&&!has('training')) weaknesses.push('No certifications or training listed');
+  while(weaknesses.length<3) weaknesses.push('Action verbs could be stronger throughout');
+
+  // Missing keywords
+  const keywordPool=['results-oriented','stakeholder management','monitoring & evaluation','impact-driven','cross-functional','KPI','project lifecycle','budget management','capacity building','community engagement'];
+  const missingKeywords=keywordPool.filter(k=>!t.includes(k.toLowerCase())).slice(0,5);
+
+  // Job matches based on content
+  const jobMatches=[];
+  if(has('teach')||has('train')||has('facilit')) jobMatches.push('Training & Facilitation Officer');
+  if(has('ngo')||has('humanitarian')||has('community')) jobMatches.push('Community Programme Officer (NGO)');
+  if(has('admin')||has('coordinator')||has('office')) jobMatches.push('Administrative Coordinator');
+  if(has('sales')||has('market')||has('business')) jobMatches.push('Business Development Associate');
+  if(has('data')||has('excel')||has('analys')) jobMatches.push('Data & Reporting Analyst');
+  if(has('health')||has('medical')||has('clinic')) jobMatches.push('Community Health Coordinator');
+  if(has('account')||has('financ')||has('budget')) jobMatches.push('Finance & Accounts Officer');
+  if(jobMatches.length<5) jobMatches.push('Project Support Officer','Remote Support Specialist','Outreach & Field Coordinator');
+  const finalJobMatches=jobMatches.slice(0,5);
+
+  // Upskill recs
+  const upskillRecs=[
+    'CS50 Harvard (free) — adds tech credibility to any CV',
+    'Google Project Management Certificate — globally recognised',
+    'Team21 Servant Leadership — top 10% leadership skills'
+  ];
+
+  // Quick wins
+  const quickWins=[
+    'Add a 3-sentence professional summary at the very top',
+    'Quantify every achievement with numbers (e.g. "managed 12-person team", "increased sales 30%")',
+    'Start every bullet point with a strong action verb (Led, Delivered, Managed, Built…)'
+  ];
+
+  // Rewritten summary
+  const rewrittenSummary=`Results-driven professional with documented experience and a strong foundation of transferable competencies. Proven ability to deliver in dynamic, resource-constrained environments. Currently pursuing internationally recognised certifications to advance career impact and move into the top 10% of candidates. Open to full-time, part-time and remote opportunities.`;
+
+  renderAnalysis({name,score,scoreLabel,summary:`Your CV scored ${score}/100. ${scoreLabel}. The analysis below highlights what's working and exactly what to fix for a stronger interview rate.`,strengths:strengths.slice(0,4),weaknesses:weaknesses.slice(0,3),missingKeywords,jobMatches:finalJobMatches,upskillRecs,quickWins,rewrittenSummary});
+  btn.disabled=false; btn.textContent='🤖 Analyze & Score My CV';
 }
 
 function fallbackAnalysis(){
@@ -1068,7 +1095,6 @@ function renderAnalysis(a){
 // BUILD PROFILE
 // ═══════════════════════════════════════════════
 async function buildProfile(){
-  if(!ANTHROPIC_API_KEY){alert('Please enter your Anthropic API key in the yellow bar at the top.\n\nGet a free key at: https://console.anthropic.com/account/keys');document.getElementById('apiKeyInput').focus();return;}
   const name=document.getElementById('pName').value.trim();
   const country=document.getElementById('pCountry').value;
   if(!name){alert('Please enter your name.');return;}
@@ -1208,52 +1234,48 @@ function renderJobs(){
 // MADSEARCH (AI-powered live job search)
 // ═══════════════════════════════════════════════
 async function madSearch(){
-  if(!ANTHROPIC_API_KEY){alert('Please enter your Anthropic API key in the yellow bar at the top.\n\nGet a free key at: https://console.anthropic.com/account/keys');document.getElementById('apiKeyInput').focus();return;}
-  const query=document.getElementById('jsQuery').value.trim();
-  const loc=document.getElementById('jsLoc').value.trim();
+  const query=(document.getElementById('jsQuery').value||'').trim().toLowerCase();
+  const loc=(document.getElementById('jsLoc').value||'').trim().toLowerCase();
   const type=document.getElementById('jsType').value;
-  const hasCv=!!(jobsPdfB64||jobsText);
-  if(!query&&!hasCv){alert('Please enter a job title/keywords, or upload your CV to power the search.');return;}
 
   const btn=document.getElementById('madSearchBtn');
-  btn.disabled=true;btn.textContent='🔍 Searching…';
+  btn.disabled=true; btn.textContent='🔍 Searching…';
   document.getElementById('jobsLoading').style.display='block';
   document.getElementById('jobsResult').innerHTML='';
 
-  const cvContext=hasCv&&jobsText&&jobsText!=='__PDF__'?`\n\nCANDIDATE CV:\n${jobsText.substring(0,2500)}`:'';
-  const prompt=`You are MaDskillz, a job search AI for Team21 Academy. Find realistic job opportunities for this candidate.
-Query: "${query||'open to opportunities'}" | Location: "${loc||'worldwide'}" | Type: "${type||'all'}"${cvContext}
+  // Small artificial delay for UX
+  await new Promise(r=>setTimeout(r,600));
 
-Return ONLY valid JSON array (no markdown):
-[
-  {"title":"Job Title","org":"Organisation Name","location":"City, Country or Remote","type":"Full-time|Part-time|Remote|Hybrid","match":85,"integrity":96,"url":"https://actual-job-url.com","description":"2 sentence description of the role","skills":["skill1","skill2","skill3"],"upskill":"One free course to qualify better","urgent":false}
-]
-Return 8-10 realistic jobs. Match score 0-100. Integrity score = how verified/legitimate the opportunity is (90-99 for major employers). Include a mix of remote and location-based. Use real job board URLs (jobs.un.org, reliefweb.int, worldbank.org/careers, careers.ilo.org, linkedin.com/jobs, etc.).`;
+  // Build keyword list from query + uploaded CV text
+  const cvWords=(jobsText&&jobsText!=='__PDF__')?jobsText.toLowerCase().split(/\W+/).filter(w=>w.length>3):[];
+  const qWords=query.split(/\W+/).filter(Boolean);
+  const allWords=[...new Set([...qWords,...cvWords.slice(0,80)])];
 
-  let messages=[{role:"user",content:prompt}];
-  if(jobsPdfB64){messages=[{role:"user",content:[{type:"document",source:{type:"base64",media_type:"application/pdf",data:jobsPdfB64}},{type:"text",text:prompt}]}];}
+  // Score each job
+  const scored=JOBS_DB.map(j=>{
+    let bonus=0;
+    const jText=(j.title+' '+j.org+' '+j.cat+' '+(j.skills||[]).join(' ')).toLowerCase();
+    allWords.forEach(w=>{if(jText.includes(w))bonus+=3;});
+    if(loc&&j.loc.toLowerCase().includes(loc))bonus+=10;
+    if(type&&(j.type===type||j.cat===type||j.cat.includes(type)))bonus+=8;
+    return{...j,match:Math.min(99,j.match+bonus)};
+  })
+  .filter(j=>{
+    if(query&&!j.title.toLowerCase().includes(query)&&!j.org.toLowerCase().includes(query)&&!(j.skills||[]).some(s=>s.toLowerCase().includes(query))&&!j.cat.toLowerCase().includes(query)&&!allWords.some(w=>j.title.toLowerCase().includes(w)||j.cat.toLowerCase().includes(w)))return false;
+    if(loc&&!j.loc.toLowerCase().includes(loc))return false;
+    if(type&&j.type!==type&&j.cat!==type&&!j.cat.includes(type))return false;
+    return true;
+  })
+  .sort((a,b)=>b.match-a.match);
 
-  try{
-    const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:getApiHeaders(),body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,messages})});
-    if(!r.ok)throw new Error('API '+r.status);
-    const d=await r.json();
-    const raw=(d.content||[]).map(b=>b.text||'').join('');
-    let jobs;
-    try{jobs=JSON.parse(raw.replace(/```json|```/g,'').trim());}
-    catch{jobs=null;}
-    if(jobs&&Array.isArray(jobs)&&jobs.length){
-      document.getElementById('jobsResult').innerHTML=
-        `<div class="alert aOk" style="margin-bottom:1rem;">✅ MaDSearch found ${jobs.length} opportunities matching your profile. Ranked by % match. Click <strong>Apply →</strong> to go to the actual listing.</div>`+
-        jobs.map(j=>renderAIJobCard(j)).join('');
-    } else {
-      renderJobs();
-    }
-  }catch(e){
-    renderJobs();
-    document.getElementById('jobsResult').innerHTML+='<div class="alert aErr">⚠️ Live search hit a snag — showing our curated database instead.</div>';
-  }
+  const results=scored.length?scored:JOBS_DB.sort((a,b)=>b.match-a.match).slice(0,8);
+
   document.getElementById('jobsLoading').style.display='none';
-  btn.disabled=false;btn.textContent='🔍 MaDSearch';
+  document.getElementById('jobsResult').innerHTML=
+    `<div class="alert aOk" style="margin-bottom:1rem;">✅ Found ${results.length} opportunities matching your search. Ranked by % match.</div>`+
+    results.map(renderJobCard).join('');
+  document.getElementById('jobsResult').scrollIntoView({behavior:'smooth'});
+  btn.disabled=false; btn.textContent='🔍 MaDSearch';
 }
 
 function renderAIJobCard(j){
@@ -1305,7 +1327,6 @@ function renderCourses(){
 // UPSKILL ME
 // ═══════════════════════════════════════════════
 async function runUpskill(){
-  if(!ANTHROPIC_API_KEY){alert('Please enter your Anthropic API key in the yellow bar at the top.\n\nGet a free key at: https://console.anthropic.com/account/keys');document.getElementById('apiKeyInput').focus();return;}
   const dream=document.getElementById('usDream').value.trim();
   if(!dream){alert('Please enter your dream job or target role.');return;}
   const jd=document.getElementById('usJd').value.trim();
@@ -1314,53 +1335,122 @@ async function runUpskill(){
   if(!hasCv&&!exp){alert('Please upload your CV or describe your experience.');return;}
 
   const btn=document.getElementById('upskillBtn');
-  btn.disabled=true;btn.textContent='⏳ Upgrading…';
+  btn.disabled=true; btn.textContent='⏳ Upgrading…';
   const loadEl=document.getElementById('upskillLoading');
   const resEl=document.getElementById('upskillResult');
-  loadEl.style.display='block';resEl.innerHTML='';
+  loadEl.style.display='block'; resEl.innerHTML='';
+  await new Promise(r=>setTimeout(r,700));
 
-  const cvContext=(usText&&usText!=='__PDF__')?`\n\nCURRENT CV:\n${usText.substring(0,3000)}`:'';
-  const prompt=`You are an expert career coach at Team21 Academy MaDskillz. Do 3 things:
-1. Write an upgraded, ATS-optimized CV tailored to the target role
-2. Write a warm, humanized cover letter
-3. List 5 free certification courses to close skill gaps
+  const sourceText=usText&&usText!=='__PDF__'?usText:exp;
+  const t=(sourceText||'').toLowerCase();
 
-${hasCv?'The candidate has uploaded their CV. Extract and use all relevant info.':''}
-Target Role: ${dream}
-Job Description/Link: ${jd||'Not provided'}
-Experience: ${exp||'See uploaded CV'}${cvContext}
-
-Return ONLY valid JSON (no markdown):
-{
-  "upgradedCV": "Full upgraded CV as plain text with sections in ALL CAPS as headers, bullets starting with •",
-  "coverLetter": "Full humanized cover letter as plain text — warm, specific, compelling — 3-4 paragraphs",
-  "freeCourses": [
-    {"name":"Course name","provider":"Provider","url":"https://...","reason":"Why it helps for this role"}
-  ],
-  "keyImprovements": ["improvement1","improvement2","improvement3"]
-}`;
-
-  let messages=[{role:"user",content:prompt}];
-  if(usPdfB64)messages=[{role:"user",content:[{type:"document",source:{type:"base64",media_type:"application/pdf",data:usPdfB64}},{type:"text",text:prompt}]}];
-
-  try{
-    const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:getApiHeaders(),body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:3000,messages})});
-    if(!r.ok)throw new Error('API '+r.status);
-    const d=await r.json();
-    const raw=(d.content||[]).map(b=>b.text||'').join('');
-    let result;
-    try{result=JSON.parse(raw.replace(/```json|```/g,'').trim());}
-    catch{result=null;}
-    if(result){
-      renderUpskillResult(result,dream);
-    } else {
-      resEl.innerHTML='<div class="alert aErr">⚠️ Processing issue. Please try again.</div>';
+  // Extract name from CV text
+  let candName='[Your Name]';
+  if(sourceText){
+    const lines=sourceText.split('\n').map(l=>l.trim()).filter(Boolean);
+    for(const l of lines){
+      if(l.length>2&&l.length<50&&/^[A-Z][a-z]/.test(l)&&!/[@\d:\/]/.test(l)){candName=l;break;}
     }
-  }catch(e){
-    resEl.innerHTML=`<div class="alert aErr">⚠️ ${esc(e.message)} — Please try again.</div>`;
   }
+
+  // Build upgraded CV
+  const cvLines=[];
+  cvLines.push(candName.toUpperCase());
+  cvLines.push('');
+  cvLines.push(`TARGET ROLE: ${dream.toUpperCase()}`);
+  cvLines.push('');
+  cvLines.push('PROFESSIONAL SUMMARY');
+  cvLines.push(`Results-driven professional seeking to transition into ${dream}. Brings a strong foundation of transferable competencies including stakeholder engagement, programme coordination and impact-driven delivery. Recognised for adaptability, cross-functional collaboration and a commitment to measurable outcomes. Pursuing internationally recognised certifications to accelerate career growth.`);
+  cvLines.push('');
+  cvLines.push('CORE COMPETENCIES');
+
+  // Extract skills from text
+  const skillKeywords=['management','coordination','communication','leadership','analysis','reporting','training','budgeting','planning','sales','research','administration','facilitation','monitoring','evaluation','community','project','digital','data','customer'];
+  const foundSkills=skillKeywords.filter(k=>t.includes(k)).slice(0,8);
+  if(foundSkills.length<4) foundSkills.push('stakeholder engagement','programme delivery','team collaboration','problem solving');
+  cvLines.push(foundSkills.map(s=>'• '+s.charAt(0).toUpperCase()+s.slice(1)).join('\n'));
+  cvLines.push('');
+
+  // Experience section
+  if(exp||sourceText){
+    cvLines.push('PROFESSIONAL EXPERIENCE');
+    const expText=exp||sourceText.substring(0,1500);
+    expText.split('\n').filter(l=>l.trim()).slice(0,15).forEach(l=>{
+      const clean=l.trim();
+      if(clean) cvLines.push(clean.startsWith('•')||clean.startsWith('-')?clean:'• '+clean);
+    });
+    cvLines.push('');
+  }
+
+  cvLines.push('EDUCATION');
+  if(t.includes('bachelor')||t.includes('degree')||t.includes('university')){
+    const eduLines=sourceText.split('\n').filter(l=>/bachelor|master|degree|university|college|diploma/i.test(l));
+    eduLines.slice(0,2).forEach(l=>cvLines.push(l.trim()));
+  } else {
+    cvLines.push('[Add your education here]');
+  }
+  cvLines.push('');
+  cvLines.push('CERTIFICATIONS & TRAINING');
+  cvLines.push('• Currently pursuing: Google Project Management Certificate (Coursera)');
+  cvLines.push('• Team21 Academy — Servant Leadership Mastery (Free, certified)');
+  cvLines.push('• CS50: Introduction to Computer Science — Harvard University (edX)');
+  cvLines.push('');
+  cvLines.push('LANGUAGES');
+  if(t.includes('french')||t.includes('français')) cvLines.push('• English (Fluent) · French (Fluent)');
+  else cvLines.push('• English (Fluent) — [add other languages]');
+
+  const upgradedCV=cvLines.join('\n');
+
+  // Cover letter
+  const coverLetter=`Dear Hiring Manager,
+
+I am writing to express my strong interest in the ${dream} position. With a background in ${foundSkills.slice(0,3).join(', ')}, I am confident in my ability to contribute meaningfully to your team and deliver measurable impact from day one.
+
+Throughout my career, I have developed a proven track record of ${foundSkills[0]||'programme delivery'} and ${foundSkills[1]||'stakeholder engagement'}. I thrive in dynamic environments and bring a collaborative, results-driven approach to everything I do.
+
+What excites me most about this opportunity is the chance to apply my skills in a context that aligns with my professional goal of ${dream}. I am committed to continuous learning — currently pursuing internationally recognised certifications in project management and AI literacy.
+
+I would welcome the opportunity to discuss how my background, skills and enthusiasm can contribute to your team's goals.
+
+Warm regards,
+${candName}`;
+
+  // Course recommendations
+  const courses=[
+    {name:'CS50: Intro to Computer Science',prov:'Harvard / edX',url:'https://cs50.harvard.edu/x/',reason:'Adds tech credibility to any application'},
+    {name:'Google Project Management Certificate',prov:'Google / Coursera',url:'https://grow.google/certificates/project-management/',reason:'Recognised by NGOs, companies & governments worldwide'},
+    {name:'Servant Leadership Mastery',prov:'Team21 Academy',url:'https://wa.me/237694294406',reason:'Top 10% leadership skills — free & certified'},
+    {name:'Humanitarian Response Essentials',prov:'DisasterReady.org',url:'https://www.disasterready.org/',reason:'Required by most INGOs for field roles'},
+    {name:'Excel Essential Training',prov:'LinkedIn Learning',url:'https://learning.linkedin.com',reason:'#1 most requested skill in global job listings'},
+  ];
+
   loadEl.style.display='none';
-  btn.disabled=false;btn.textContent='🚀 Upgrade My CV & Write Cover Letter';
+  resEl.innerHTML=`
+    <div class="alert aOk">✅ Your upgraded CV and cover letter are ready. Copy them below.</div>
+    <div class="card" style="margin-bottom:1.5rem;">
+      <h3 style="font-family:'Fraunces',serif;font-weight:800;margin-bottom:1rem;">📄 Upgraded CV — Tailored for: ${esc(dream)}</h3>
+      <div style="background:#f9f9f7;border-radius:10px;padding:1.2rem;font-size:.82rem;line-height:1.75;white-space:pre-wrap;font-family:monospace;border:1px solid #eee;max-height:400px;overflow-y:auto;">${esc(upgradedCV)}</div>
+      <button class="btn bFire bSm" style="margin-top:.8rem;" onclick="navigator.clipboard.writeText(${JSON.stringify(upgradedCV)}).then(()=>alert('CV copied to clipboard!'))">📋 Copy CV</button>
+    </div>
+    <div class="card" style="margin-bottom:1.5rem;">
+      <h3 style="font-family:'Fraunces',serif;font-weight:800;margin-bottom:1rem;">✉️ Cover Letter</h3>
+      <div style="background:#f9f9f7;border-radius:10px;padding:1.2rem;font-size:.85rem;line-height:1.8;white-space:pre-wrap;border:1px solid #eee;">${esc(coverLetter)}</div>
+      <button class="btn bJade bSm" style="margin-top:.8rem;" onclick="navigator.clipboard.writeText(${JSON.stringify(coverLetter)}).then(()=>alert('Cover letter copied!'))">📋 Copy Cover Letter</button>
+    </div>
+    <div class="card">
+      <h3 style="font-family:'Fraunces',serif;font-weight:800;margin-bottom:1rem;">🎓 5 Free Courses to Close Your Skill Gaps</h3>
+      ${courses.map(c=>`
+        <div style="display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 0;border-bottom:1px solid #f0f0f0;">
+          <div style="width:38px;height:38px;border-radius:8px;background:var(--gfire);display:grid;place-items:center;font-size:1.1rem;flex-shrink:0;">🎓</div>
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:.88rem;">${esc(c.name)}</div>
+            <div style="font-size:.74rem;color:#aaa;">${esc(c.prov)}</div>
+            <div style="font-size:.76rem;color:var(--jade2);margin-top:.15rem;">→ ${esc(c.reason)}</div>
+          </div>
+          <a href="${c.url}" target="_blank" class="btn bFire bSm">Start →</a>
+        </div>`).join('')}
+    </div>`;
+  btn.disabled=false; btn.textContent='🚀 Upgrade My CV & Get a Plan';
 }
 
 function renderUpskillResult(r,dream){
@@ -1423,7 +1513,6 @@ function renderUpskillResult(r,dream){
 // CV BUILDER
 // ═══════════════════════════════════════════════
 async function buildCV(){
-  if(!ANTHROPIC_API_KEY){alert('Please enter your Anthropic API key in the yellow bar at the top.\n\nGet a free key at: https://console.anthropic.com/account/keys');document.getElementById('apiKeyInput').focus();return;}
   const name=document.getElementById('cvName').value.trim();
   const email=document.getElementById('cvEmail').value.trim();
   const phone=document.getElementById('cvPhone').value.trim();
@@ -1451,85 +1540,129 @@ async function buildCV(){
   const errEl=document.getElementById('cvError');
   const jobsEl=document.getElementById('cvJobsResult');
 
-  genBtn.disabled=true;genBtn.textContent='⏳ Generating…';
+  genBtn.disabled=true; genBtn.textContent='⏳ Generating…';
   loadEl.style.display='block';
-  docEl.style.display='none';coverEl.style.display='none';actEl.style.display='none';errEl.style.display='none';jobsEl.innerHTML='';
+  docEl.style.display='none'; coverEl.style.display='none'; actEl.style.display='none'; errEl.style.display='none'; jobsEl.innerHTML='';
   loadEl.scrollIntoView({behavior:'smooth',block:'center'});
+  await new Promise(r=>setTimeout(r,700));
 
-  const cvContext=cvbText?`\n\nEXISTING CV (extract all useful info):\n${cvbText.substring(0,3000)}`:'';
-  const prompt=`You are an expert career coach at Team21 Academy MaDskillz.
-Write a brand-new, professional, ATS-optimized CV${wantCover?' AND a warm humanized cover letter':''} tailored to the target job.
-${hasUpload?'IMPORTANT: Uploaded CV provided — extract ALL useful info and merge with details below.':''}
+  // Build CV text
+  const sourceText=cvbText||exp;
+  const t=(sourceText||'').toLowerCase();
+  const skillList=skills?skills.split(/[,;|\n]/).map(s=>s.trim()).filter(Boolean):[];
 
-Name: ${name} | Email: ${email||'N/A'} | Phone: ${phone||'N/A'} | Location: ${loc||'N/A'}
-${linkedin?'LinkedIn: '+linkedin:''}${web?' | Website: '+web:''}
-Target Job: ${jobtitle}
-Job Description: ${jd||'General professional role'}
-Experience: ${exp||'See uploaded CV'}
-Education: ${edu||'Not specified'}
-Skills: ${skills||'Derive from all sources'}${cvContext}
+  // Auto-detect extra skills from exp text
+  const autoSkills=['management','coordination','communication','leadership','analysis','reporting','training','facilitation','monitoring','evaluation','community engagement','project management','stakeholder engagement','data entry','budget management'];
+  const detectedSkills=autoSkills.filter(k=>t.includes(k));
+  const allSkills=[...new Set([...skillList,...detectedSkills])].slice(0,12);
 
-Rules:
-1. Merge ALL sources — uploaded CV + typed info
-2. Convert ALL informal experience into professional impact bullets
-3. Quantify every achievement (use estimates if needed: ~$200/day revenue, ~50 clients served)
-4. Strong active verbs: Led, Managed, Delivered, Grew, Trained, Built, Coordinated
-5. Tailor every word to the target job
-6. CV sections in order: PROFESSIONAL SUMMARY | CORE COMPETENCIES | PROFESSIONAL EXPERIENCE | EDUCATION & CERTIFICATIONS | SKILLS & LANGUAGES${linkedin||web?' | DIGITAL PRESENCE':''}
-7. Plain text only — no markdown. Use • for bullets. Clean line breaks.
-${wantCover?`8. After CV, add exactly this separator on its own line: ===COVER===
-Then write the cover letter: warm, specific, 3-4 paragraphs, addresses target role directly.`:''}`;
+  const cvLines=[];
+  cvLines.push(name.toUpperCase());
+  const contactParts=[email,phone,loc,linkedin,web].filter(Boolean);
+  if(contactParts.length) cvLines.push(contactParts.join('  |  '));
+  cvLines.push('');
 
-  let messages=[{role:"user",content:prompt}];
-  if(cvbPdfB64)messages=[{role:"user",content:[{type:"document",source:{type:"base64",media_type:"application/pdf",data:cvbPdfB64}},{type:"text",text:prompt}]}];
+  cvLines.push('PROFESSIONAL SUMMARY');
+  const summarySkills=allSkills.slice(0,3).join(', ')||'programme delivery, stakeholder engagement, team collaboration';
+  cvLines.push(`Dedicated and results-driven ${jobtitle} with proven expertise in ${summarySkills}. Committed to delivering measurable impact in dynamic environments. Seeking to bring a collaborative, solutions-focused approach to a forward-thinking organisation.`);
+  cvLines.push('');
 
-  try{
-    const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:getApiHeaders(),body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2500,messages})});
-    if(!r.ok){const ed=await r.json().catch(()=>({}));throw new Error(ed?.error?.message||'HTTP '+r.status);}
-    const d=await r.json();
-    const fullText=(d.content||[]).map(b=>b.text||'').join('')||'';
-    if(!fullText.trim())throw new Error('Empty response from AI');
-
-    let cvText=fullText, coverText='';
-    if(wantCover&&fullText.includes('===COVER===')){
-      [cvText,coverText]=fullText.split('===COVER===');
+  if(allSkills.length){
+    cvLines.push('CORE SKILLS');
+    // 2-column layout in text
+    const half=Math.ceil(allSkills.length/2);
+    for(let i=0;i<half;i++){
+      const left='• '+allSkills[i];
+      const right=allSkills[i+half]?'  • '+allSkills[i+half]:'';
+      cvLines.push(left+right);
     }
-
-    generatedCV=`${name}\n${[email,phone,loc].filter(Boolean).join(' | ')}${jobtitle?'\nTarget: '+jobtitle:''}\n\n${cvText.trim()}`;
-    generatedCover=coverText.trim();
-
-    // Render CV
-    docEl.innerHTML=buildCVHtml(name,email,phone,loc,jobtitle,cvText,linkedin,web);
-    docEl.style.display='block';
-
-    // Render cover letter
-    if(coverText.trim()){
-      coverEl.innerHTML=`<h3 style="font-family:'Fraunces',serif;font-weight:700;font-size:.88rem;color:var(--jade2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem;">✉️ Cover Letter — ${esc(jobtitle)}</h3>`+
-        coverText.trim().split('\n').filter(l=>l.trim()).map(l=>`<p style="margin-bottom:.75rem;">${esc(l)}</p>`).join('');
-      coverEl.style.display='block';
-    }
-
-    actEl.style.cssText='display:flex;flex-wrap:wrap;gap:.65rem;margin-top:1.2rem;';
-    docEl.scrollIntoView({behavior:'smooth'});
-
-    // Find matching jobs if requested
-    if(wantJobs){
-      jobsEl.innerHTML=`<h3 style="font-family:'Fraunces',serif;font-weight:800;font-size:1rem;margin:1.5rem 0 .85rem;color:var(--ink);">💼 Jobs Matching Your New CV</h3><div class="jobsGrid">${JOBS_DB.slice(0,6).map(renderJobCard).join('')}</div><div class="alert aInfo" style="margin-top:.75rem;">🌐 Go to <strong>Find Jobs</strong> and hit MaDSearch to get AI-powered live results.</div>`;
-    }
-
-  }catch(e){
-    console.error(e);
-    errEl.textContent='⚠️ '+e.message+' — A template CV is shown. Edit and download it.';
-    errEl.style.display='flex';
-    const fallback=`PROFESSIONAL SUMMARY\nDynamic professional with proven hands-on experience and a consistent record of delivering results. Effective communicator and adaptable team player. Seeking to leverage transferable skills as a ${jobtitle||'professional'}.\n\nCORE COMPETENCIES\n• Communication & Stakeholder Engagement\n• Problem Solving & Critical Thinking\n• Adaptability & Cross-Cultural Competence\n• Time Management & Multitasking\n• Leadership & Team Coordination\n\nPROFESSIONAL EXPERIENCE\n${exp||'Add your experience above and regenerate.'}\n\nEDUCATION & CERTIFICATIONS\n${edu||'Add your education above and regenerate.'}\n\nSKILLS & LANGUAGES\n${skills||'Add your skills above and regenerate.'}`;
-    generatedCV=`${name}\n${[email,phone,loc].filter(Boolean).join(' | ')}\n\n${fallback}`;
-    docEl.innerHTML=buildCVHtml(name,email,phone,loc,jobtitle,fallback,linkedin,web);
-    docEl.style.display='block';
-    actEl.style.cssText='display:flex;flex-wrap:wrap;gap:.65rem;margin-top:1.2rem;';
-  }finally{
-    loadEl.style.display='none';
-    genBtn.disabled=false;genBtn.textContent='✨ Generate My Professional CV';
+    cvLines.push('');
   }
+
+  cvLines.push('PROFESSIONAL EXPERIENCE');
+  if(exp){
+    exp.split('\n').filter(l=>l.trim()).forEach(l=>{
+      const clean=l.trim();
+      if(clean) cvLines.push(clean.startsWith('•')||clean.startsWith('-')?clean:'• '+clean);
+    });
+  } else if(cvbText){
+    // Extract experience section from uploaded CV
+    const expMatch=cvbText.match(/(?:experience|employment|work history)([\s\S]{0,2000}?)(?:education|skills|certif|$)/i);
+    if(expMatch) expMatch[1].split('\n').filter(l=>l.trim()).slice(0,15).forEach(l=>cvLines.push(l.trim()));
+  }
+  cvLines.push('');
+
+  if(edu){
+    cvLines.push('EDUCATION');
+    edu.split('\n').filter(l=>l.trim()).forEach(l=>cvLines.push(l.trim()));
+    cvLines.push('');
+  }
+
+  cvLines.push('CERTIFICATIONS & PROFESSIONAL DEVELOPMENT');
+  cvLines.push('• Team21 Academy — Servant Leadership Mastery (Free, certified)');
+  cvLines.push('• Pursuing: Google Project Management Certificate (Coursera)');
+  cvLines.push('• CS50: Introduction to Computer Science — Harvard University (edX)');
+  cvLines.push('');
+
+  if(jd){
+    // Extract keywords from JD and add a tailored section
+    const jdWords=jd.toLowerCase().split(/\W+/).filter(w=>w.length>4);
+    const jdSkills=jdWords.filter(w=>allSkills.some(s=>s.includes(w))||autoSkills.some(s=>s.includes(w))).slice(0,5);
+    if(jdSkills.length){
+      cvLines.push('JOB-SPECIFIC COMPETENCIES');
+      jdSkills.forEach(s=>cvLines.push('• '+s.charAt(0).toUpperCase()+s.slice(1)));
+      cvLines.push('');
+    }
+  }
+
+  cvLines.push('REFERENCES');
+  cvLines.push('Available upon request.');
+
+  generatedCV=cvLines.join('\n');
+
+  // Cover letter
+  let coverText='';
+  if(wantCover){
+    coverText=`Dear Hiring Manager,
+
+I am writing to express my enthusiastic interest in the ${jobtitle} position${jd?' as advertised':''}.
+
+With a background in ${(allSkills.slice(0,3).join(', '))||'programme delivery and coordination'}, I bring a results-oriented approach and a demonstrated ability to deliver in demanding, fast-paced environments. I am particularly drawn to this role because it aligns directly with my professional goals and areas of deepest expertise.
+
+Throughout my career, I have consistently demonstrated the ability to ${exp?exp.split(/[.\n]/)[0].trim().toLowerCase():'deliver impactful results and build strong stakeholder relationships'}. I am known for my collaborative style, attention to detail and commitment to continuous improvement.
+
+I am currently pursuing internationally recognised certifications in Project Management and AI Literacy, which I believe will add immediate value to your team. I am eager to bring my energy, skills and passion to your organisation and contribute to its mission.
+
+I would welcome the opportunity to discuss my application in more detail at your convenience.
+
+Yours sincerely,
+${name}${email?'\n'+email:''}${phone?'\n'+phone:''}`;
+    generatedCover=coverText;
+  }
+
+  loadEl.style.display='none';
+  renderCVDoc(generatedCV, document.getElementById('cvDoc'));
+  docEl.style.display='block';
+
+  if(wantCover&&coverText){
+    coverEl.innerHTML=`<h3 style="font-family:'Fraunces',serif;font-weight:800;margin-bottom:.8rem;">✉️ Cover Letter</h3><div style="white-space:pre-wrap;font-size:.88rem;line-height:1.8;">${esc(coverText)}</div>`;
+    coverEl.style.display='block';
+  }
+
+  actEl.style.display='flex';
+  actEl.scrollIntoView({behavior:'smooth',block:'center'});
+
+  if(wantJobs){
+    const jobKeywords=[jobtitle,...allSkills.slice(0,3)].join(' ').toLowerCase();
+    const matched=JOBS_DB.filter(j=>{
+      const jt=(j.title+' '+j.cat+' '+(j.skills||[]).join(' ')).toLowerCase();
+      return allSkills.some(s=>jt.includes(s))||jt.includes(jobtitle.toLowerCase().split(' ')[0]);
+    }).sort((a,b)=>b.match-a.match).slice(0,5);
+    if(matched.length){
+      jobsEl.innerHTML=`<h3 style="font-family:'Fraunces',serif;font-weight:800;margin:1.5rem 0 .8rem;">💼 Top Job Matches for ${esc(jobtitle)}</h3>`+matched.map(renderJobCard).join('');
+    }
+  }
+  genBtn.disabled=false; genBtn.textContent='✨ Generate My CV';
 }
 
 // ═══════════════════════════════════════════════
