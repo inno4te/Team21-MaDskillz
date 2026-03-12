@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+let ANTHROPIC_API_KEY = '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';
+function updateApiKey(v){ ANTHROPIC_API_KEY = v.trim(); }
+function saveApiKey(){
+  const v=document.getElementById('apiKeyInput').value.trim();
+  if(!v){alert('Please enter your API key.');return;}
+  ANTHROPIC_API_KEY=v;
+  try{sessionStorage.setItem('mad_api_key',v);}catch(e){}
+  document.getElementById('apiKeyStatus').textContent='✅ Key saved for this session';
+  document.getElementById('apiKeyStatus').style.color='#00BF91';
+}
+function getApiHeaders(){
+  return {"Content-Type":"application/json","anthropic-version":"2023-06-01","x-api-key":ANTHROPIC_API_KEY};
+}
+function updateCity(){
+  const c=document.getElementById('pCountry').value;
+  const m={'Cameroon':'Yaoundé, Douala, Bamenda…','Kenya':'Nairobi, Mombasa, Kisumu…','Nigeria':'Lagos, Abuja, Port Harcourt…','Ghana':'Accra, Kumasi, Tamale…','South Africa':'Johannesburg, Cape Town, Durban…','Uganda':'Kampala, Entebbe, Gulu…','Tanzania':'Dar es Salaam, Arusha…','Ethiopia':'Addis Ababa, Dire Dawa…','Rwanda':'Kigali, Butare…'};
+  const cityEl=document.getElementById('pCity');
+  if(cityEl&&m[c])cityEl.placeholder=m[c];
+}
+(function(){
+  try{
+    const k=sessionStorage.getItem('mad_api_key');
+    if(k){ANTHROPIC_API_KEY=k;document.addEventListener('DOMContentLoaded',()=>{
+      const inp=document.getElementById('apiKeyInput');if(inp)inp.value=k;
+      const st=document.getElementById('apiKeyStatus');if(st){st.textContent='✅ Key loaded';st.style.color='#00BF91';}
+    });}
+  }catch(e){}
+})();
+
+function togglePanel(bodyId,arrowId){
+  const b=document.getElementById(bodyId),a=document.getElementById(arrowId);
+  const open=b.style.display!=='none';
+  b.style.display=open?'none':'block';
+  if(a)a.classList.toggle('open',!open);
+}
+function dzOver(e,id){e.preventDefault();document.getElementById(id)?.classList.add('over');}
+function dzLeave(id){document.getElementById(id)?.classList.remove('over');}
+function dzDrop(e,id,fn){e.preventDefault();document.getElementById(id)?.classList.remove('over');const f=e.dataTransfer.files[0];if(f)fn(f);}
+function setLang(l){document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';}
+function updateCity(){
+  const c=document.getElementById('pCountry').value;
+  const m={'Cameroon':'Yaoundé, Douala, Bamenda…','Kenya':'Nairobi, Mombasa, Kisumu…','Nigeria':'Lagos, Abuja, Port Harcourt…','Ghana':'Accra, Kumasi, Tamale…','South Africa':'Johannesburg, Cape Town, Durban…','Uganda':'Kampala, Entebbe, Gulu…','Tanzania':'Dar es Salaam, Arusha…','Ethiopia':'Addis Ababa, Dire Dawa…','Rwanda':'Kigali, Butare…'};
+  const cityEl=document.getElementById('pCity');
+  if(cityEl&&m[c])cityEl.placeholder=m[c];
+}
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaDskillz T21 — Make a Difference | Team21 Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,400;9..144,0,700;9..144,0,900;9..144,1,400;9..144,1,700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0D0E10;--ink2:#1A1C20;--ink3:#2C2F35;
+  --cream:#FFFDF6;--cream2:#FFF8E8;--cream3:#FDF0CC;
+  --ember:#FF4500;--ember2:#FF6B35;--ember3:#FFAB7A;
+  --gold:#F0A500;--gold2:#F7C84A;--gold3:#FDE98A;
+  --jade:#00BF91;--jade2:#009E78;
+  --cobalt:#1A73E8;--cobalt2:#4A96FF;
+  --rose:#E8274B;
+  --gfire:linear-gradient(135deg,#FF4500 0%,#FF6B35 55%,#F0A500 100%);
+  --gdark:linear-gradient(150deg,#0D0E10 0%,#1a1508 55%,#251d09 100%);
+  --ggold:linear-gradient(90deg,#F0A500,#F7C84A,#F0A500);
+  --shfire:0 8px 40px rgba(255,69,0,.24);
+  --shcard:0 2px 20px rgba(0,0,0,.07);
+  --r:14px;--r2:22px;--r3:100px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.022;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* ANNOUNCEMENT BAR */
+.topbar{background:var(--ember);color:#fff;text-align:center;font-size:.72rem;font-weight:600;padding:.4rem 1rem;letter-spacing:.03em;position:relative;z-index:10;}
+.topbar a{color:#fff;text-decoration:underline;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:500;background:rgba(13,14,16,.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(240,165,0,.14);height:64px;display:flex;align-items:center;padding:0 1.75rem;gap:1rem;}
+.navBrand{display:flex;align-items:center;gap:.65rem;cursor:pointer;text-decoration:none;flex-shrink:0;}
+.navLogo{width:40px;height:40px;border-radius:9px;background:var(--gfire);display:grid;place-items:center;font-family:'Fraunces',serif;font-weight:900;font-size:.9rem;color:#fff;letter-spacing:-.02em;}
+.brandStack{display:flex;flex-direction:column;line-height:1.15;}
+.brandName{font-family:'Fraunces',serif;font-weight:900;font-size:1.1rem;color:#fff;letter-spacing:-.03em;}
+.brandName em{color:var(--gold2);font-style:normal;}
+.brandSub{font-size:.58rem;color:rgba(255,255,255,.35);letter-spacing:.1em;text-transform:uppercase;}
+.navLinks{display:flex;gap:.15rem;flex:1;justify-content:center;}
+.navLink{background:transparent;border:none;color:rgba(255,255,255,.45);font-family:'Plus Jakarta Sans',sans-serif;font-size:.8rem;font-weight:500;padding:.4rem .82rem;border-radius:8px;cursor:pointer;transition:all .18s;white-space:nowrap;}
+.navLink:hover{color:var(--gold2);background:rgba(240,165,0,.08);}
+.navLink.active{color:var(--ink);background:var(--gold2);font-weight:700;}
+.navRight{display:flex;align-items:center;gap:.6rem;margin-left:auto;}
+.navWa{display:flex;align-items:center;gap:.38rem;background:rgba(0,191,145,.1);border:1px solid rgba(0,191,145,.22);color:var(--jade);font-size:.72rem;font-weight:600;padding:.3rem .82rem;border-radius:20px;text-decoration:none;transition:all .18s;white-space:nowrap;}
+.navWa:hover{background:var(--jade);color:#fff;}
+.navLang{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.75rem;padding:.28rem .52rem;border-radius:7px;cursor:pointer;}
+.burger{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:.45rem;border:none;background:transparent;}
+.burger span{display:block;width:21px;height:1.5px;background:#fff;border-radius:2px;transition:all .28s;}
+.burger.x span:nth-child(1){transform:rotate(45deg) translate(4px,4px);}
+.burger.x span:nth-child(2){opacity:0;}
+.burger.x span:nth-child(3){transform:rotate(-45deg) translate(4px,-4px);}
+.mobileMenu{display:none;position:absolute;top:64px;left:0;right:0;z-index:499;background:rgba(13,14,16,.98);border-bottom:1px solid rgba(240,165,0,.1);flex-direction:column;padding:.75rem;gap:.2rem;}
+.mobileMenu.open{display:flex;}
+.mobileMenu button,.mobileMenu a{background:transparent;border:none;color:rgba(255,255,255,.6);font-family:'Plus Jakarta Sans',sans-serif;font-size:.88rem;font-weight:500;padding:.58rem .9rem;border-radius:7px;cursor:pointer;text-align:left;transition:all .18s;text-decoration:none;display:block;}
+.mobileMenu button:hover,.mobileMenu a:hover{background:rgba(240,165,0,.08);color:var(--gold2);}
+@media(max-width:720px){.navLinks{display:none;}.navWa{display:none;}.burger{display:flex;}nav{padding:0 1rem;}}
+
+/* HERO */
+.hero{background:var(--gdark);position:relative;overflow:hidden;padding:5.5rem 2rem 6.5rem;text-align:center;}
+.heroBg1{position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:800px;height:500px;border-radius:50%;background:radial-gradient(ellipse,rgba(255,69,0,.2) 0%,rgba(240,165,0,.06) 40%,transparent 70%);pointer-events:none;}
+.heroBg2{position:absolute;bottom:-80px;right:-60px;width:350px;height:350px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,191,145,.1) 0%,transparent 70%);pointer-events:none;}
+.heroBg3{position:absolute;top:40%;left:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(ellipse,rgba(240,165,0,.08) 0%,transparent 70%);pointer-events:none;}
+.heroCopyright{font-size:.65rem;color:rgba(255,255,255,.28);letter-spacing:.18em;text-transform:uppercase;margin-bottom:1rem;}
+.heroEyebrow{display:inline-flex;align-items:center;gap:.45rem;background:rgba(240,165,0,.1);border:1px solid rgba(240,165,0,.22);color:var(--gold2);font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:.3rem 1rem;border-radius:20px;margin-bottom:1.5rem;}
+.hero h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(2.8rem,7vw,5.2rem);color:#fff;line-height:1.0;letter-spacing:-.04em;margin-bottom:.9rem;}
+.hero h1 .fire{background:var(--gfire);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero h1 .serif{font-style:italic;font-weight:400;color:var(--gold2);}
+.heroDesc{color:rgba(255,255,255,.55);font-size:1.05rem;max-width:580px;margin:0 auto 2.5rem;line-height:1.72;font-weight:300;}
+.heroChips{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:2.5rem;}
+.chip{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);color:rgba(255,255,255,.62);font-size:.71rem;font-weight:500;padding:.26rem .8rem;border-radius:20px;display:flex;align-items:center;gap:.32rem;}
+.chip strong{color:var(--gold2);}
+.heroBtns{display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap;}
+.btnFire{display:inline-flex;align-items:center;gap:.45rem;background:var(--gfire);color:#fff;font-family:'Fraunces',serif;font-weight:700;font-size:1rem;padding:.82rem 2rem;border-radius:var(--r3);border:none;cursor:pointer;box-shadow:var(--shfire);transition:transform .2s,box-shadow .2s;text-decoration:none;}
+.btnFire:hover{transform:translateY(-2px);box-shadow:0 14px 48px rgba(255,69,0,.38);}
+.btnGhost{display:inline-flex;align-items:center;gap:.45rem;background:transparent;color:rgba(255,255,255,.75);font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:.93rem;padding:.82rem 1.9rem;border-radius:var(--r3);border:1px solid rgba(255,255,255,.18);cursor:pointer;transition:all .2s;text-decoration:none;}
+.btnGhost:hover{background:rgba(255,255,255,.07);color:#fff;}
+.heroWave{position:absolute;bottom:-1px;left:0;right:0;height:72px;background:var(--cream);clip-path:ellipse(55% 100% at 50% 100%);}
+
+/* TABBAR */
+.tabBar{display:flex;justify-content:center;gap:.45rem;padding:2rem 1rem 0;flex-wrap:wrap;}
+.tabBtn{background:#fff;border:2px solid transparent;font-family:'Fraunces',serif;font-weight:700;font-size:.84rem;padding:.58rem 1.4rem;border-radius:var(--r3);cursor:pointer;transition:all .22s;color:var(--ink3);box-shadow:var(--shcard);display:flex;align-items:center;gap:.42rem;letter-spacing:-.01em;}
+.tabBtn:hover{border-color:var(--gold2);color:var(--ember);}
+.tabBtn.active{background:var(--ember);color:#fff;border-color:var(--ember);box-shadow:var(--shfire);}
+
+/* SECTIONS */
+.section{display:none;padding:2.5rem 1rem 5rem;max-width:980px;margin:0 auto;}
+.section.active{display:block;animation:fadeUp .38s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.secHead{margin-bottom:2rem;}
+.secPill{display:inline-block;font-size:.62rem;font-weight:700;letter-spacing:.17em;text-transform:uppercase;color:var(--ember);background:rgba(255,69,0,.07);border:1px solid rgba(255,69,0,.14);padding:.22rem .7rem;border-radius:20px;margin-bottom:.65rem;}
+.secTitle{font-family:'Fraunces',serif;font-weight:900;font-size:1.95rem;color:var(--ink);letter-spacing:-.04em;line-height:1.06;margin-bottom:.4rem;}
+.secTitle span{color:var(--ember);}
+.secSub{color:#6b6b6b;font-size:.88rem;line-height:1.7;max-width:700px;}
+
+/* CARDS */
+.card{background:#fff;border-radius:var(--r2);padding:2rem;box-shadow:var(--shcard);border:1px solid rgba(0,0,0,.055);margin-bottom:1.5rem;}
+
+/* FORM */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:540px){.row2{grid-template-columns:1fr;}}
+.fg{margin-bottom:1.05rem;}
+.fg label{display:flex;align-items:center;gap:.32rem;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:#999;margin-bottom:.38rem;}
+.fg label .req{color:var(--ember);}
+.fg input,.fg select,.fg textarea{width:100%;padding:.7rem .95rem;border:1.5px solid #E8E8E8;border-radius:var(--r);font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;color:var(--ink);background:#FAFAF8;transition:all .18s;resize:vertical;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--ember);background:#fff;box-shadow:0 0 0 3px rgba(255,69,0,.08);}
+.fg textarea{min-height:86px;line-height:1.6;}
+.hint{font-size:.71rem;color:#bbb;margin-top:.26rem;line-height:1.5;}
+
+/* SKILL TAGS */
+.tagWrap{display:flex;flex-wrap:wrap;gap:.38rem;min-height:44px;padding:.46rem;border:1.5px solid #E8E8E8;border-radius:var(--r);background:#FAFAF8;cursor:text;transition:all .18s;}
+.tagWrap:focus-within{border-color:var(--ember);background:#fff;box-shadow:0 0 0 3px rgba(255,69,0,.08);}
+.sTag{background:var(--gfire);color:#fff;font-size:.72rem;font-weight:700;padding:.2rem .62rem;border-radius:20px;display:flex;align-items:center;gap:.26rem;animation:pop .14s ease;}
+@keyframes pop{from{transform:scale(.6);opacity:0;}to{transform:scale(1);opacity:1;}}
+.sTag button{background:none;border:none;cursor:pointer;font-size:.86rem;line-height:1;color:rgba(255,255,255,.6);padding:0;transition:color .15s;}
+.sTag button:hover{color:#fff;}
+#tagIn{border:none;background:transparent;outline:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.86rem;min-width:120px;flex:1;color:var(--ink);}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;font-family:'Fraunces',serif;font-weight:700;font-size:.9rem;padding:.75rem 1.7rem;border-radius:var(--r3);border:none;cursor:pointer;transition:all .2s;text-decoration:none;letter-spacing:-.01em;}
+.bFire{background:var(--gfire);color:#fff;box-shadow:var(--shfire);}
+.bFire:hover{transform:translateY(-2px);box-shadow:0 12px 42px rgba(255,69,0,.32);}
+.bOutline{background:#fff;color:var(--ember);border:2px solid var(--ember);}
+.bOutline:hover{background:var(--ember);color:#fff;}
+.bJade{background:var(--jade);color:#fff;}
+.bJade:hover{background:var(--jade2);transform:translateY(-1px);}
+.bCobalt{background:var(--cobalt);color:#fff;}
+.bCobalt:hover{background:var(--cobalt2);transform:translateY(-1px);}
+.bDark{background:var(--ink);color:#fff;}
+.bDark:hover{background:var(--ink2);}
+.bSm{font-size:.76rem;padding:.48rem 1.05rem;}
+.btn:disabled{opacity:.42;cursor:not-allowed;transform:none !important;box-shadow:none !important;}
+.btnRow{display:flex;gap:.65rem;flex-wrap:wrap;align-items:center;}
+
+/* UPLOAD WIDGET */
+.uploadBox{background:#fff;border-radius:var(--r2);border:2px dashed rgba(240,165,0,.42);margin-bottom:1.5rem;overflow:hidden;transition:border-color .22s;}
+.uploadBox:hover{border-color:var(--gold);}
+.upHead{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.45rem;cursor:pointer;user-select:none;transition:background .18s;}
+.upHead:hover{background:rgba(240,165,0,.035);}
+.upBadge{width:42px;height:42px;border-radius:9px;flex-shrink:0;background:linear-gradient(135deg,var(--gold),var(--ember2));display:grid;place-items:center;font-size:1.1rem;}
+.upTitle{font-family:'Fraunces',serif;font-weight:700;font-size:.92rem;color:var(--ink);}
+.upSub{font-size:.72rem;color:#aaa;margin-top:.08rem;}
+.upArrow{font-size:.82rem;color:var(--ember);font-weight:700;transition:transform .26s;}
+.upArrow.open{transform:rotate(180deg);}
+.upBody{padding:0 1.45rem 1.45rem;}
+.dropZone{border:2px dashed #e0e0e0;border-radius:var(--r);padding:2rem 1.5rem;text-align:center;cursor:pointer;transition:all .22s;background:#FAFAF8;}
+.dropZone:hover,.dropZone.over{border-color:var(--ember);background:rgba(255,69,0,.025);}
+.dropIco{font-size:2.3rem;margin-bottom:.5rem;display:block;}
+.dropLbl{font-family:'Fraunces',serif;font-weight:700;font-size:.9rem;color:var(--ink);margin-bottom:.28rem;}
+.dropLbl span{color:var(--ember);text-decoration:underline;}
+.dropHint{font-size:.72rem;color:#bbb;}
+.upPill{display:flex;align-items:center;justify-content:space-between;background:rgba(0,191,145,.07);border:1px solid rgba(0,191,145,.2);border-radius:9px;padding:.58rem .95rem;margin-top:.65rem;font-size:.78rem;font-weight:600;color:var(--jade2);}
+.upPill button{background:none;border:none;cursor:pointer;color:#bbb;font-size:1rem;line-height:1;transition:color .15s;}
+.upPill button:hover{color:var(--ember);}
+
+/* ALERTS */
+.alert{padding:.9rem 1.1rem;border-radius:var(--r);margin-bottom:1rem;font-size:.83rem;display:flex;align-items:flex-start;gap:.58rem;line-height:1.6;}
+.aTip{background:rgba(240,165,0,.09);border:1px solid rgba(240,165,0,.22);color:#7a5800;}
+.aOk{background:rgba(0,191,145,.08);border:1px solid rgba(0,191,145,.2);color:var(--jade2);}
+.aErr{background:rgba(255,69,0,.07);border:1px solid rgba(255,69,0,.18);color:#b03000;}
+.aInfo{background:rgba(26,115,232,.07);border:1px solid rgba(26,115,232,.18);color:#1044a0;}
+
+/* SPINNER */
+.spinWrap{text-align:center;padding:3rem 1rem;}
+.spinner{width:52px;height:52px;border-radius:50%;border:4px solid rgba(255,69,0,.12);border-top-color:var(--ember);animation:spin .88s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.spinLbl{font-family:'Fraunces',serif;font-weight:700;color:var(--ember);margin-top:.78rem;font-size:.92rem;}
+.spinSub{font-size:.71rem;color:#aaa;margin-top:.2rem;}
+
+/* SCORE RING */
+.scoreRing{position:relative;width:92px;height:92px;flex-shrink:0;}
+.scoreRing svg{transform:rotate(-90deg);}
+.scoreRing .sn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;font-family:'Fraunces',serif;font-weight:900;font-size:1.42rem;color:var(--ember);}
+.scoreRing .sn small{font-size:.4rem;font-weight:600;color:#bbb;margin-top:-3px;letter-spacing:.06em;}
+
+/* PROFILE RESULT */
+.profBanner{background:var(--gdark);border-radius:var(--r2);padding:2rem;display:flex;align-items:center;gap:1.4rem;flex-wrap:wrap;margin-bottom:1.5rem;border:1px solid rgba(240,165,0,.14);}
+.profAva{width:72px;height:72px;border-radius:50%;flex-shrink:0;background:var(--gfire);display:grid;place-items:center;font-family:'Fraunces',serif;font-weight:900;font-size:1.6rem;color:#fff;}
+.profInfo h2{font-family:'Fraunces',serif;font-weight:900;color:#fff;font-size:1.4rem;letter-spacing:-.03em;}
+.profInfo p{color:rgba(255,255,255,.48);font-size:.79rem;margin-top:.16rem;line-height:1.6;}
+.profPct{margin-left:auto;background:var(--gfire);color:#fff;font-family:'Fraunces',serif;font-weight:900;font-size:1.1rem;padding:.58rem 1.25rem;border-radius:var(--r);text-align:center;}
+.profPct small{display:block;font-size:.56rem;font-weight:600;opacity:.8;letter-spacing:.1em;}
+.statsRow{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;}
+@media(max-width:540px){.statsRow{grid-template-columns:1fr 1fr;}}
+.statBox{background:#fff;border-radius:var(--r);padding:1.1rem;text-align:center;box-shadow:var(--shcard);border-top:3px solid var(--ember);}
+.statBox .sv{font-family:'Fraunces',serif;font-weight:900;font-size:2rem;color:var(--ember);}
+.statBox .sl{font-size:.68rem;color:#aaa;margin-top:.08rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;}
+.skillsCard{background:#fff;border-radius:var(--r2);padding:1.45rem;margin-bottom:1.5rem;box-shadow:var(--shcard);border:1px solid rgba(0,0,0,.05);}
+.skillsCard h3{font-family:'Fraunces',serif;font-weight:700;font-size:.88rem;margin-bottom:.82rem;color:var(--ink);display:flex;align-items:center;gap:.42rem;}
+.pill{display:inline-flex;align-items:center;gap:.26rem;font-size:.72rem;font-weight:600;padding:.24rem .7rem;border-radius:20px;margin:.16rem;}
+.pRaw{background:var(--cream3);color:#7a5000;border:1px solid rgba(240,165,0,.3);}
+.pXfer{background:rgba(255,69,0,.07);color:var(--ember);border:1px solid rgba(255,69,0,.16);}
+.pNew{background:rgba(0,191,145,.07);color:var(--jade2);border:1px solid rgba(0,191,145,.2);}
+
+/* JOB CARDS */
+.jobsGrid{display:grid;gap:.85rem;}
+.jobCard{background:#fff;border-radius:var(--r2);padding:1.2rem 1.35rem;display:flex;align-items:flex-start;gap:.95rem;box-shadow:var(--shcard);border:1.5px solid transparent;transition:all .22s;text-decoration:none;color:inherit;position:relative;overflow:hidden;}
+.jobCard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--gfire);opacity:0;transition:opacity .2s;}
+.jobCard:hover{border-color:rgba(255,69,0,.18);box-shadow:0 8px 36px rgba(255,69,0,.1);transform:translateY(-2px);}
+.jobCard:hover::before{opacity:1;}
+.jobIco{width:46px;height:46px;border-radius:10px;flex-shrink:0;display:grid;place-items:center;font-size:1.35rem;}
+.jobBody{flex:1;min-width:0;}
+.jobTitle{font-family:'Fraunces',serif;font-weight:700;font-size:.93rem;color:var(--ink);}
+.jobOrg{font-size:.74rem;color:#aaa;margin-top:.06rem;}
+.jobTags{display:flex;flex-wrap:wrap;gap:.26rem;margin-top:.48rem;}
+.jTag{font-size:.65rem;font-weight:700;padding:.14rem .5rem;border-radius:20px;}
+.jMatch{background:rgba(0,191,145,.1);color:var(--jade2);}
+.jRemote{background:rgba(26,115,232,.1);color:var(--cobalt);}
+.jUrgent{background:rgba(255,69,0,.1);color:var(--ember);}
+.jHybrid{background:rgba(240,165,0,.12);color:#7a5800;}
+.jFull{background:rgba(0,0,0,.05);color:#555;}
+.jInteg{font-size:.65rem;font-weight:700;margin-top:.35rem;display:flex;align-items:center;gap:.26rem;}
+.jobRight{text-align:right;flex-shrink:0;}
+.jobPct{font-family:'Fraunces',serif;font-weight:900;font-size:1rem;color:var(--ember);}
+.jobPct small{display:block;font-size:.56rem;color:#bbb;font-weight:500;}
+.applyBtn{display:inline-flex;align-items:center;gap:.28rem;margin-top:.48rem;background:var(--gfire);color:#fff;font-family:'Fraunces',serif;font-weight:700;font-size:.68rem;padding:.28rem .76rem;border-radius:20px;text-decoration:none;transition:opacity .18s;}
+.applyBtn:hover{opacity:.82;}
+
+/* UPSKILL COURSES */
+.courseGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(278px,1fr));gap:1rem;}
+.courseCard{background:#fff;border-radius:var(--r2);padding:1.35rem;box-shadow:var(--shcard);border-top:4px solid var(--gold2);display:flex;flex-direction:column;gap:.52rem;transition:transform .2s;}
+.courseCard.t21{border-top-color:var(--ember);}
+.courseCard:hover{transform:translateY(-3px);}
+.cProv{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ember);}
+.cName{font-family:'Fraunces',serif;font-weight:700;font-size:.9rem;color:var(--ink);}
+.cDesc{font-size:.78rem;color:#666;line-height:1.55;flex:1;}
+.cMeta{display:flex;gap:.32rem;flex-wrap:wrap;}
+.cBadge{font-size:.63rem;font-weight:700;padding:.14rem .5rem;border-radius:20px;}
+.cFree{background:rgba(0,191,145,.1);color:var(--jade2);}
+.cCert{background:rgba(255,69,0,.08);color:var(--ember);}
+.cT21{background:rgba(240,165,0,.12);color:#7a5800;}
+.cLink{display:inline-flex;align-items:center;gap:.36rem;background:var(--gfire);color:#fff;font-family:'Fraunces',serif;font-weight:700;font-size:.74rem;padding:.4rem .92rem;border-radius:20px;text-decoration:none;transition:opacity .18s;width:fit-content;}
+.cLink:hover{opacity:.82;}
+
+/* CV DOC */
+.cvDoc{background:#fff;border-radius:var(--r2);padding:2.5rem 3rem;box-shadow:0 8px 52px rgba(0,0,0,.1);font-size:.88rem;line-height:1.7;border:1px solid rgba(0,0,0,.05);display:none;}
+@media(max-width:540px){.cvDoc{padding:1.5rem;}}
+.cvDoc h2{font-family:'Fraunces',serif;font-weight:900;font-size:1.85rem;color:var(--ink);letter-spacing:-.04em;border-bottom:3px solid var(--ember);padding-bottom:.38rem;margin-bottom:.55rem;}
+.cvDoc .cvContact{font-size:.79rem;color:#777;margin-bottom:.32rem;}
+.cvDoc .cvTarget{font-weight:700;color:var(--ember);font-size:.84rem;margin-bottom:1rem;}
+.cvDoc h3{font-family:'Fraunces',serif;font-weight:800;font-size:.86rem;color:var(--ember);text-transform:uppercase;letter-spacing:.1em;margin-top:1.35rem;margin-bottom:.38rem;padding-bottom:.2rem;border-bottom:1px solid rgba(255,69,0,.13);}
+.cvSec{padding-left:.72rem;border-left:3px solid var(--cream3);margin-bottom:.5rem;}
+.cvBullet{display:block;padding:.1rem 0;font-size:.85rem;line-height:1.62;}
+
+/* COVER LETTER */
+.coverDoc{background:#fff;border-radius:var(--r2);padding:2.2rem 2.8rem;box-shadow:var(--shcard);font-size:.9rem;line-height:1.78;display:none;border-left:4px solid var(--jade);}
+@media(max-width:540px){.coverDoc{padding:1.5rem;}}
+.coverDoc h3{font-family:'Fraunces',serif;font-weight:700;font-size:.88rem;color:var(--jade2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem;}
+
+/* ANALYSIS CARD */
+.analysisCard{background:#fff;border-radius:var(--r2);padding:2rem;box-shadow:var(--shcard);border-left:5px solid var(--ember);margin-bottom:1.5rem;animation:fadeUp .4s ease;}
+.analysisCard h3{font-family:'Fraunces',serif;font-weight:800;font-size:1.05rem;color:var(--ink);margin-bottom:1rem;display:flex;align-items:center;gap:.45rem;}
+.aGrid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem;}
+@media(max-width:540px){.aGrid{grid-template-columns:1fr;}}
+.aBlock{background:#FAFAF8;border-radius:var(--r);padding:.9rem;}
+.aBlock h4{font-family:'Fraunces',serif;font-weight:700;font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.52rem;}
+.aBlock h4.g{color:var(--jade2);}.aBlock h4.r{color:var(--ember);}.aBlock h4.b{color:var(--cobalt);}.aBlock h4.a{color:#7a5800;}
+.aItem{font-size:.77rem;color:var(--ink);padding:.17rem 0;display:flex;align-items:flex-start;gap:.36rem;border-bottom:1px solid rgba(0,0,0,.04);line-height:1.45;}
+.aItem:last-child{border-bottom:none;}
+.rewriteBox{margin-top:1.05rem;background:rgba(255,69,0,.035);border:1.5px solid rgba(255,69,0,.13);border-radius:var(--r);padding:.9rem;}
+.rewriteLabel{font-size:.68rem;font-weight:700;color:var(--ember);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.42rem;}
+
+/* TEAM21 STRIP */
+.t21Strip{background:var(--gdark);border-radius:var(--r2);padding:1.7rem 2rem;margin-bottom:1.5rem;border:1px solid rgba(240,165,0,.16);}
+.t21Strip h3{font-family:'Fraunces',serif;font-weight:800;color:#fff;font-size:1.02rem;margin-bottom:.2rem;letter-spacing:-.02em;}
+.t21Strip p{color:rgba(255,255,255,.48);font-size:.77rem;line-height:1.65;margin-bottom:.9rem;}
+.t21Links{display:flex;flex-wrap:wrap;gap:.42rem;}
+.t21Lnk{display:inline-flex;align-items:center;gap:.32rem;font-size:.72rem;font-weight:700;padding:.36rem .85rem;border-radius:20px;text-decoration:none;transition:all .18s;}
+.t21Wa{background:rgba(0,191,145,.1);color:var(--jade);border:1px solid rgba(0,191,145,.2);}
+.t21Wa:hover{background:var(--jade);color:#fff;}
+.t21Em{background:rgba(26,115,232,.1);color:var(--cobalt);border:1px solid rgba(26,115,232,.2);}
+.t21Em:hover{background:var(--cobalt);color:#fff;}
+.t21Co{background:rgba(255,69,0,.1);color:var(--ember2);border:1px solid rgba(255,69,0,.18);}
+.t21Co:hover{background:var(--ember);color:#fff;}
+
+/* SEARCH BAR */
+.searchBar{background:#fff;border-radius:var(--r2);padding:1.2rem 1.45rem;box-shadow:var(--shcard);border:1px solid rgba(0,0,0,.05);display:flex;gap:.8rem;align-items:flex-end;flex-wrap:wrap;margin-bottom:1.5rem;}
+.searchBar .fg{margin:0;flex:1;min-width:140px;}
+
+/* FOOTER */
+footer{background:var(--ink);color:rgba(255,255,255,.36);text-align:center;padding:2.5rem 1rem;font-size:.76rem;border-top:1px solid rgba(240,165,0,.1);margin-top:4rem;}
+footer .fLogo{font-family:'Fraunces',serif;font-weight:900;font-size:1.22rem;color:#fff;letter-spacing:-.03em;margin-bottom:.28rem;}
+footer .fLogo em{color:var(--gold2);font-style:normal;}
+footer .fTag{color:var(--ember2);font-weight:600;font-size:.76rem;margin-bottom:.65rem;}
+footer .fLinks{display:flex;justify-content:center;gap:1.35rem;flex-wrap:wrap;margin-bottom:.65rem;}
+footer .fLinks a{color:rgba(255,255,255,.36);text-decoration:none;transition:color .18s;}
+footer .fLinks a:hover{color:var(--gold2);}
+footer .fCopy{font-size:.68rem;color:rgba(255,255,255,.2);}
+footer .fCopy strong{color:var(--gold2);}
+</style>
+</head>
+<body>
+<!-- API KEY BANNER -->
+<div id="apiKeyBanner" style="background:#1a1c20;border-bottom:2px solid #F0A500;padding:.7rem 1.5rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;position:sticky;top:0;z-index:600;">
+  <span style="font-size:.8rem;color:#F7C84A;font-weight:700;white-space:nowrap;">🔑 Anthropic API Key required for AI features:</span>
+  <input id="apiKeyInput" type="password" placeholder="sk-ant-…" autocomplete="off"
+    style="flex:1;min-width:220px;max-width:380px;padding:.38rem .85rem;border-radius:8px;border:1.5px solid rgba(240,165,0,.4);background:#0d0e10;color:#fff;font-size:.82rem;font-family:sans-serif;"
+    oninput="updateApiKey(this.value)">
+  <button onclick="saveApiKey()" style="background:linear-gradient(135deg,#FF4500,#F0A500);color:#fff;border:none;border-radius:8px;padding:.38rem 1rem;font-size:.8rem;font-weight:700;cursor:pointer;">Save</button>
+  <span id="apiKeyStatus" style="font-size:.75rem;color:#aaa;"></span>
+  <a href="https://console.anthropic.com/account/keys" target="_blank" style="font-size:.72rem;color:rgba(240,165,0,.7);text-decoration:underline;white-space:nowrap;">Get a free key ↗</a>
+  <button onclick="document.getElementById('apiKeyBanner').style.display='none'" style="background:none;border:none;color:#555;cursor:pointer;font-size:1.1rem;margin-left:auto;">✕</button>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">🌍 MaDskillz T21 by <strong>Team21 Academy</strong> — <em>Make a Difference</em> &nbsp;·&nbsp; <a href="https://wa.me/237694294406" target="_blank">💬 WhatsApp Team21</a> &nbsp;·&nbsp; <a href="/cdn-cgi/l/email-protection#e09485818dd2d18f8e8c898e85a0878d81898cce838f8d">✉️ <span class="__cf_email__" data-cfemail="93e7f6f2fea1a2fcfdfffafdf6d3f4fef2faffbdf0fcfe">[email&#160;protected]</span></a></div>
+
+<!-- NAV -->
+<nav>
+  <a class="navBrand" onclick="goto('profile')">
+    <div class="navLogo">MaD</div>
+    <div class="brandStack">
+      <span class="brandName">MaD<em>skillz</em> T21</span>
+      <span class="brandSub">Make a Difference © Innocent Forteh</span>
+    </div>
+  </a>
+  <div class="navLinks">
+    <button class="navLink active" onclick="goto('profile')">🧠 Build Profile</button>
+    <button class="navLink" onclick="goto('jobs')">🔍 Find Jobs</button>
+    <button class="navLink" onclick="goto('upskill')">🚀 Upskill Me</button>
+    <button class="navLink" onclick="goto('cv')">📄 Build CV</button>
+  </div>
+  <div class="navRight">
+    <a href="https://wa.me/237694294406?text=Hello%20Team21!%20I%20found%20you%20via%20MaDskillz." target="_blank" class="navWa">💬 Team21</a>
+    <select class="navLang" onchange="setLang(this.value)">
+      <option value="en">🌐 EN</option><option value="fr">🇫🇷 FR</option>
+      <option value="es">🇪🇸 ES</option><option value="ar">🇸🇦 AR</option>
+      <option value="sw">🇰🇪 SW</option><option value="pt">🇧🇷 PT</option>
+    </select>
+    <button class="burger" id="burger" onclick="toggleMobile()"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobileMenu" id="mmenu">
+  <button onclick="goto('profile');closeMobile()">🧠 Build My Profile</button>
+  <button onclick="goto('jobs');closeMobile()">🔍 Find Jobs</button>
+  <button onclick="goto('upskill');closeMobile()">🚀 Upskill Me</button>
+  <button onclick="goto('cv');closeMobile()">📄 Build My CV</button>
+  <a href="https://wa.me/237694294406" target="_blank">💬 WhatsApp Team21</a>
+  <a href="/cdn-cgi/l/email-protection#80f4e5e1edb2b1efeeece9eee5c0e7ede1e9ecaee3efed">✉️ <span class="__cf_email__" data-cfemail="ccb8a9ada1fefda3a2a0a5a2a98caba1ada5a0e2afa3a1">[email&#160;protected]</span></a>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="heroBg1"></div><div class="heroBg2"></div><div class="heroBg3"></div>
+  <div class="heroCopyright">© Innocent Forteh — Make a Difference</div>
+  <div class="heroEyebrow">🌍 Team21 Academy · Connecting People to Resources</div>
+  <h1>There's a <span class="fire">Job</span> for<br><span class="serif">Everyone.</span></h1>
+  <p class="heroDesc">Any skill — farming, driving, tailoring, coding — MaDskillz converts it into professional gold, crafts your CV, crawls the internet for real jobs ranked by match %, and hands you 100% free certifications to level up.</p>
+  <div class="heroChips">
+    <span class="chip">✅ <strong>AI skill conversion</strong></span>
+    <span class="chip">🌐 <strong>Live job crawling</strong></span>
+    <span class="chip">📊 <strong>% match + integrity score</strong></span>
+    <span class="chip">📄 <strong>Word &amp; PDF export</strong></span>
+    <span class="chip">🎓 <strong>100% free certs</strong></span>
+  </div>
+  <div class="heroBtns">
+    <button class="btnFire" onclick="goto('profile')">✨ Build My Profile &amp; CV</button>
+    <button class="btnGhost" onclick="goto('cv')">📄 Quick CV Builder</button>
+  </div>
+  <div class="heroWave"></div>
+</div>
+
+<!-- TAB BAR -->
+<div class="tabBar">
+  <button class="tabBtn active" onclick="goto('profile')">🧠 Build My Profile</button>
+  <button class="tabBtn" onclick="goto('jobs')">🔍 Find Jobs</button>
+  <button class="tabBtn" onclick="goto('upskill')">🚀 Upskill Me</button>
+  <button class="tabBtn" onclick="goto('cv')">📄 Build My CV</button>
+</div>
+
+<!-- ═══ PROFILE BUILDER ═══ -->
+<div class="section active" id="sec-profile">
+  <div class="secHead">
+    <div class="secPill">Step 1 of 4</div>
+    <h2 class="secTitle">Build Your <span>MaDskillz</span> Profile</h2>
+    <p class="secSub">Tell us about yourself — <strong>any skill counts</strong>. Selling at a local market, farming, tailoring, nursing, driving — MaDskillz converts them all into professional, marketable competencies, generates your CV, and finds your best-matched jobs.</p>
+  </div>
+
+  <!-- Upload CV for analysis -->
+  <div class="uploadBox">
+    <div class="upHead" onclick="togglePanel('pUpBody','pUpArrow')">
+      <div style="display:flex;align-items:center;gap:.8rem;">
+        <div class="upBadge">📎</div>
+        <div><div class="upTitle">Already have a CV? Upload it for instant AI scoring</div><div class="upSub">MaDskillz evaluates your CV, finds gaps &amp; rewrites weak sections</div></div>
+      </div>
+      <div class="upArrow" id="pUpArrow">▼</div>
+    </div>
+    <div class="upBody" id="pUpBody" style="display:none;">
+      <div class="dropZone" id="pDrop" onclick="document.getElementById('pFile').click()"
+        ondragover="dzOver(event,'pDrop')" ondragleave="dzLeave('pDrop')" ondrop="dzDrop(event,'pDrop',handleProfileFile)">
+        <span class="dropIco">📄</span>
+        <div class="dropLbl">Drop your CV here or <span>click to browse</span></div>
+        <div class="dropHint">PDF, DOCX or TXT · Max 6 MB · Private &amp; secure</div>
+        <input type="file" id="pFile" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="handleProfileFile(this.files[0])">
+      </div>
+      <div id="pUpPill" style="display:none;" class="upPill">
+        <span>✅ <span id="pUpName"></span></span>
+        <button onclick="clearProfileUpload()">✕</button>
+      </div>
+      <div style="margin-top:.9rem;">
+        <button class="btn bFire" id="analyzeBtn" onclick="analyzeCV()" style="display:none;">🤖 Analyze &amp; Score My CV</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="cvAnalysisOut"></div>
+
+  <div class="alert aTip">💡 <strong>Power tip:</strong> "Managed daily sales of $200+ at Gikomba market, trained 3 junior vendors" beats "market seller". Specifics = stronger matches.</div>
+
+  <div class="card">
+    <div class="row2">
+      <div class="fg"><label>Full Name <span class="req">*</span></label><input type="text" id="pName" placeholder="e.g. Amara Diallo"></div>
+      <div class="fg"><label>Email</label><input type="email" id="pEmail" placeholder="amara@email.com"></div>
+    </div>
+    <div class="row2">
+      <div class="fg"><label>Country <span class="req">*</span></label>
+        <select id="pCountry" onchange="updateCity()">
+          <option value="">Select country…</option>
+          <option>Cameroon</option><option>Kenya</option><option>Nigeria</option><option>Ghana</option>
+          <option>South Africa</option><option>Uganda</option><option>Tanzania</option><option>Rwanda</option>
+          <option>Ethiopia</option><option>Senegal</option><option>Côte d'Ivoire</option><option>Zimbabwe</option>
+          <option>DR Congo</option><option>Zambia</option><option>Mozambique</option>
+          <option>United States</option><option>United Kingdom</option><option>Canada</option>
+          <option>France</option><option>Germany</option><option>UAE</option>
+          <option>India</option><option>Brazil</option><option>Philippines</option><option>Other</option>
+        </select>
+      </div>
+      <div class="fg"><label>City / Region</label><input type="text" id="pCity" placeholder="e.g. Yaoundé, Lagos, Nairobi…"></div>
+    </div>
+    <div class="row2">
+      <div class="fg"><label>Highest Education</label>
+        <select id="pEdu">
+          <option value="">Select…</option>
+          <option>No formal education</option><option>Primary school</option>
+          <option>Secondary / High school</option><option>Certificate / Diploma</option>
+          <option>Bachelor's Degree</option><option>Master's Degree</option>
+          <option>PhD / Doctorate</option><option>Vocational Training</option>
+        </select>
+      </div>
+      <div class="fg"><label>Field of Study</label><input type="text" id="pField" placeholder="e.g. Agriculture, Business, IT…"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="fg">
+      <label>Your Skills <span class="req">*</span> <span style="text-transform:none;letter-spacing:0;font-weight:400;color:#bbb;">(press Enter or comma after each)</span></label>
+      <div class="tagWrap" id="tagWrap" onclick="document.getElementById('tagIn').focus()">
+        <input type="text" id="tagIn" placeholder="selling, driving, farming, Excel, nursing, carpentry…">
+      </div>
+      <p class="hint">Any skill counts — selling, driving, cooking, farming, hairdressing, nursing, teaching, construction. MaDskillz converts them all into marketable competencies.</p>
+    </div>
+    <div class="fg">
+      <label>Work Experience <span style="text-transform:none;letter-spacing:0;font-weight:400;color:#bbb;">(your words — be generous)</span></label>
+      <textarea id="pExp" placeholder="e.g. 2019–2024: Ran a tailoring workshop in Douala. 12 regular clients. Managed fabric procurement, pricing, and delivery. Trained 3 apprentices. Revenue grew 40% in 2 years…" style="min-height:110px;"></textarea>
+    </div>
+    <div class="row2">
+      <div class="fg"><label>Languages Spoken</label><input type="text" id="pLangs" placeholder="English, French, Swahili, Yoruba…"></div>
+      <div class="fg"><label>Preferred Job Type</label>
+        <select id="pJobtype">
+          <option value="">Any</option><option>Full-time</option><option>Part-time</option>
+          <option>Remote / Online</option><option>Hybrid</option>
+          <option>NGO / Non-profit</option><option>Government</option><option>Self-employment</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label>Dream Job or Career Goal</label>
+      <input type="text" id="pDream" placeholder="e.g. Programme Officer at UNICEF, Remote Data Analyst, Start my own business…">
+    </div>
+  </div>
+
+  <div class="btnRow">
+    <button class="btn bFire" id="profileBtn" onclick="buildProfile()">✨ Create My MaDskillz CV &amp; Find Jobs</button>
+    <button class="btn bOutline bSm" onclick="goto('cv')">📄 Just Build My CV</button>
+  </div>
+
+  <div id="profileResult" style="display:none;margin-top:2.5rem;"></div>
+</div>
+
+<!-- ═══ FIND JOBS ═══ -->
+<div class="section" id="sec-jobs">
+  <div class="secHead">
+    <div class="secPill">Live Job Search</div>
+    <h2 class="secTitle"><span>MaDSearch</span> — Find Your Match</h2>
+    <p class="secSub">Upload your CV or use the profile you built — MaDskillz verifies your qualifications then crawls UN Jobs, LinkedIn, ReliefWeb, embassy boards, remote platforms and more. Every result is ranked by % match and given an integrity score.</p>
+  </div>
+
+  <div class="uploadBox">
+    <div class="upHead" onclick="togglePanel('jsUpBody','jsUpArrow')">
+      <div style="display:flex;align-items:center;gap:.8rem;">
+        <div class="upBadge">📋</div>
+        <div><div class="upTitle">Upload your CV to power MaDSearch</div><div class="upSub">Qualifications verified before matching — stronger results</div></div>
+      </div>
+      <div class="upArrow" id="jsUpArrow">▼</div>
+    </div>
+    <div class="upBody" id="jsUpBody" style="display:none;">
+      <div class="dropZone" id="jsDrop" onclick="document.getElementById('jsFile').click()"
+        ondragover="dzOver(event,'jsDrop')" ondragleave="dzLeave('jsDrop')" ondrop="dzDrop(event,'jsDrop',handleJobsFile)">
+        <span class="dropIco">📋</span>
+        <div class="dropLbl">Drop your CV or <span>click to browse</span></div>
+        <div class="dropHint">PDF, DOCX or TXT</div>
+        <input type="file" id="jsFile" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="handleJobsFile(this.files[0])">
+      </div>
+      <div id="jsUpPill" style="display:none;" class="upPill">
+        <span>✅ <span id="jsUpName"></span></span><button onclick="clearJobsUpload()">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="searchBar">
+    <div class="fg" style="flex:2;"><label>Job title / Keywords</label><input type="text" id="jsQuery" placeholder="e.g. Project Officer, Data Analyst, Community Manager…"></div>
+    <div class="fg"><label>Location</label><input type="text" id="jsLoc" placeholder="Country or Remote"></div>
+    <div class="fg"><label>Type</label>
+      <select id="jsType">
+        <option value="">All</option><option>Remote</option><option>Full-time</option>
+        <option>Part-time</option><option>Hybrid</option><option>NGO / UN</option>
+      </select>
+    </div>
+    <button class="btn bFire" onclick="madSearch()" id="madSearchBtn" style="white-space:nowrap;">🔍 MaDSearch</button>
+  </div>
+
+  <div id="jobsLoading" style="display:none;">
+    <div class="spinWrap"><div class="spinner"></div>
+      <div class="spinLbl">MaDskillz is crawling the internet…</div>
+      <div class="spinSub">Scanning UN Jobs · LinkedIn · ReliefWeb · Embassies · Remote boards</div>
+    </div>
+  </div>
+  <div id="jobsResult"></div>
+</div>
+
+<!-- ═══ UPSKILL ME ═══ -->
+<div class="section" id="sec-upskill">
+  <div class="secHead">
+    <div class="secPill">Where MaD is Really MaD</div>
+    <h2 class="secTitle">Upskill Me — <span>Level Up</span></h2>
+    <p class="secSub">Upload your CV, tell MaDskillz your dream job — we'll upgrade your CV to match it, write a humanized cover letter, and hand you a curated list of 100% free certifications to close your skill gaps.</p>
+  </div>
+
+  <div class="uploadBox">
+    <div class="upHead" onclick="togglePanel('usUpBody','usUpArrow')">
+      <div style="display:flex;align-items:center;gap:.8rem;">
+        <div class="upBadge">🎯</div>
+        <div><div class="upTitle">Upload your CV + target job</div><div class="upSub">MaDskillz upgrades your CV &amp; writes a tailored cover letter</div></div>
+      </div>
+      <div class="upArrow" id="usUpArrow">▼</div>
+    </div>
+    <div class="upBody" id="usUpBody" style="display:none;">
+      <div class="dropZone" id="usDrop" onclick="document.getElementById('usFile').click()"
+        ondragover="dzOver(event,'usDrop')" ondragleave="dzLeave('usDrop')" ondrop="dzDrop(event,'usDrop',handleUpskillFile)">
+        <span class="dropIco">📄</span>
+        <div class="dropLbl">Drop your CV or <span>click to browse</span></div>
+        <div class="dropHint">PDF, DOCX or TXT</div>
+        <input type="file" id="usFile" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="handleUpskillFile(this.files[0])">
+      </div>
+      <div id="usUpPill" style="display:none;" class="upPill">
+        <span>✅ <span id="usUpName"></span></span><button onclick="clearUpskillUpload()">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="fg">
+      <label>Your Dream Job / Role You Are Targeting <span class="req">*</span></label>
+      <input type="text" id="usDream" placeholder="e.g. Programme Officer at UNDP, Remote UX Designer, Sales Manager at Equity Bank…">
+    </div>
+    <div class="fg">
+      <label>Paste Job Description or Weblink <span style="text-transform:none;letter-spacing:0;font-weight:400;color:#bbb;">(optional but powerful)</span></label>
+      <textarea id="usJd" placeholder="Paste the full job posting or a weblink. MaDskillz tailors everything to match it exactly." style="min-height:95px;"></textarea>
+    </div>
+    <div class="fg">
+      <label>Your Experience &amp; Skills <span style="text-transform:none;letter-spacing:0;font-weight:400;color:#bbb;">(if no CV uploaded)</span></label>
+      <textarea id="usExp" placeholder="Describe your background. MaDskillz will use it to power your upgrade." style="min-height:78px;"></textarea>
+    </div>
+    <div class="btnRow">
+      <button class="btn bFire" id="upskillBtn" onclick="runUpskill()">🚀 Upgrade My CV &amp; Write Cover Letter</button>
+    </div>
+  </div>
+
+  <div id="upskillLoading" style="display:none;">
+    <div class="spinWrap"><div class="spinner"></div>
+      <div class="spinLbl">Upgrading your profile…</div>
+      <div class="spinSub">Tailoring CV · Writing cover letter · Finding free courses</div>
+    </div>
+  </div>
+  <div id="upskillResult"></div>
+
+  <div class="secHead" style="margin-top:3rem;">
+    <div class="secPill">Free Courses Library</div>
+    <h2 class="secTitle" style="font-size:1.55rem;">100% Free <span>Certifications</span></h2>
+  </div>
+  <div class="courseGrid" id="coursesGrid"></div>
+
+  <div class="t21Strip" style="margin-top:2rem;">
+    <h3>🟠 Team21 Academy — Official Partner Courses</h3>
+    <p>Team21 Academy offers world-class certified training in Servant Leadership, AI, and Project Management. All free for MaDskillz users. Connect directly:</p>
+    <div class="t21Links">
+      <a href="https://wa.me/237694294406?text=Hello%20Team21!%20I%20found%20you%20via%20MaDskillz%20and%20want%20to%20know%20more%20about%20your%20courses." target="_blank" class="t21Lnk t21Wa">💬 WhatsApp +237 694 294 406</a>
+      <a href="/cdn-cgi/l/email-protection#99edfcf8f4aba8f6f7f5f0f7fcd9fef4f8f0f5b7faf6f4a6eaecfbf3fcfaeda4d4f8ddeaf2f0f5f5e3bcaba9b4bcaba9daf6ecebeafcbcaba9dcf7e8ecf0ebe0" class="t21Lnk t21Em">✉️ <span class="__cf_email__" data-cfemail="582c3d39356a6937363431363d183f35393134763b3735">[email&#160;protected]</span></a>
+      <a href="https://inno4te.github.io/team21-consulting/#c-impact" target="_blank" class="t21Lnk t21Co">🌐 Team21 Impact</a>
+      <a href="https://inno4te.github.io/Team21-SL-Training/" target="_blank" class="t21Lnk t21Co">🎓 Servant Leadership</a>
+      <a href="https://inno4te.github.io/Team21_PMP/" target="_blank" class="t21Lnk t21Co">📋 PMP Training</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CV BUILDER ═══ -->
+<div class="section" id="sec-cv">
+  <div class="secHead">
+    <div class="secPill">CV Builder</div>
+    <h2 class="secTitle">Build Your <span>Professional CV</span></h2>
+    <p class="secSub">Upload an existing CV for MaDskillz to review and upgrade, or fill the form below. AI generates an ATS-optimized CV downloadable as <strong>Word (.docx)</strong> or <strong>PDF</strong> — plus an optional cover letter.</p>
+  </div>
+
+  <div class="uploadBox">
+    <div class="upHead" onclick="togglePanel('cvUpBody','cvUpArrow')">
+      <div style="display:flex;align-items:center;gap:.8rem;">
+        <div class="upBadge">📂</div>
+        <div><div class="upTitle">Upload existing CV to review &amp; upgrade</div><div class="upSub">MaDskillz reads it, merges your content &amp; produces a polished new version</div></div>
+      </div>
+      <div class="upArrow" id="cvUpArrow">▼</div>
+    </div>
+    <div class="upBody" id="cvUpBody" style="display:none;">
+      <div class="dropZone" id="cvDrop" onclick="document.getElementById('cvFile').click()"
+        ondragover="dzOver(event,'cvDrop')" ondragleave="dzLeave('cvDrop')" ondrop="dzDrop(event,'cvDrop',handleCVFile)">
+        <span class="dropIco">📋</span>
+        <div class="dropLbl">Drop your existing CV or <span>click to browse</span></div>
+        <div class="dropHint">PDF, DOCX or TXT · Content merged into your new CV</div>
+        <input type="file" id="cvFile" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="handleCVFile(this.files[0])">
+      </div>
+      <div id="cvUpPill" style="display:none;" class="upPill">
+        <span>✅ <span id="cvUpName"></span></span><button onclick="clearCVUpload()">✕</button>
+      </div>
+      <div id="cvUpOk" style="display:none;margin-top:.7rem;">
+        <div class="alert aOk">✅ CV loaded — it will be merged with your details below when generating.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row2">
+      <div class="fg"><label>Full Name <span class="req">*</span></label><input type="text" id="cvName" placeholder="e.g. Amara Diallo"></div>
+      <div class="fg"><label>Email</label><input type="email" id="cvEmail" placeholder="amara@email.com"></div>
+    </div>
+    <div class="row2">
+      <div class="fg"><label>Phone / WhatsApp</label><input type="text" id="cvPhone" placeholder="+237 694 000 000"></div>
+      <div class="fg"><label>City, Country</label><input type="text" id="cvLoc" placeholder="Yaoundé, Cameroon"></div>
+    </div>
+    <div class="fg"><label>Target Job Title <span class="req">*</span></label>
+      <input type="text" id="cvJobtitle" placeholder="e.g. Community Outreach Officer, Data Analyst, Sales Manager…"></div>
+    <div class="fg"><label>Job Description / Posting <span style="text-transform:none;letter-spacing:0;font-weight:400;color:#bbb;">(paste to tailor your CV)</span></label>
+      <textarea id="cvJd" placeholder="Paste the job description here. MaDskillz will tailor every word of your CV to match it exactly." style="min-height:95px;"></textarea>
+    </div>
+    <div class="fg"><label>Your Experience <span style="text-transform:none;letter-spacing:0;font-weight:400;color:#bbb;">(include informal &amp; informal work!)</span></label>
+      <textarea id="cvExp" placeholder="e.g. 2019–2024: Tailoring workshop in Douala. 12 clients. Managed orders, pricing, delivery, trained 3 apprentices, revenue +40% in 2 years…" style="min-height:115px;"></textarea>
+    </div>
+    <div class="fg"><label>Education &amp; Certifications</label>
+      <textarea id="cvEdu" placeholder="e.g. BEPC 2015 — Lycée de Yaoundé. CS50x Certificate 2023 — Harvard (edX)…" style="min-height:68px;"></textarea>
+    </div>
+    <div class="fg"><label>Skills <span style="text-transform:none;letter-spacing:0;font-weight:400;color:#bbb;">(comma-separated)</span></label>
+      <input type="text" id="cvSkills" placeholder="communication, Excel, tailoring, leadership, French, Swahili…">
+    </div>
+    <div class="row2">
+      <div class="fg"><label>LinkedIn (optional)</label><input type="text" id="cvLinkedin" placeholder="linkedin.com/in/yourname"></div>
+      <div class="fg"><label>Website / Portfolio (optional)</label><input type="text" id="cvWeb" placeholder="yoursite.com"></div>
+    </div>
+
+    <div style="background:#FAFAF8;border-radius:var(--r);padding:1rem;margin-top:.25rem;">
+      <div style="font-size:.75rem;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.6rem;">Options</div>
+      <div style="display:flex;gap:1.25rem;flex-wrap:wrap;font-size:.84rem;font-weight:500;">
+        <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;">
+          <input type="checkbox" id="optCover" style="width:auto;accent-color:var(--ember);"> Generate cover letter too
+        </label>
+        <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;">
+          <input type="checkbox" id="optJobs" style="width:auto;accent-color:var(--ember);" checked> Find matching jobs after
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="btnRow" style="margin-bottom:1.5rem;">
+    <button class="btn bFire" id="cvGenBtn" onclick="buildCV()">✨ Generate My Professional CV</button>
+  </div>
+
+  <div id="cvLoading" style="display:none;">
+    <div class="spinWrap"><div class="spinner"></div><div class="spinLbl">Crafting your CV with AI…</div><div class="spinSub">Takes 10–20 seconds</div></div>
+  </div>
+  <div id="cvError" style="display:none;" class="alert aErr"></div>
+  <div class="cvDoc" id="cvDoc"></div>
+  <div class="coverDoc" id="coverDoc"></div>
+  <div id="cvActions" style="display:none;flex-wrap:wrap;gap:.65rem;margin-top:1.2rem;">
+    <button class="btn bJade" onclick="downloadDocx()">⬇️ Download Word (.docx)</button>
+    <button class="btn bCobalt" onclick="downloadPDF()">📄 Download PDF</button>
+    <button class="btn bDark bSm" onclick="printCV()">🖨️ Print</button>
+    <button class="btn bOutline bSm" onclick="resetCV()">🔄 Start Over</button>
+  </div>
+  <div id="cvJobsResult" style="margin-top:2rem;"></div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="fLogo">MaD<em>skillz</em> T21</div>
+  <div class="fTag">Make a Difference · There's a Job for Everyone</div>
+  <div class="fLinks">
+    <a href="https://wa.me/237694294406" target="_blank">💬 WhatsApp Team21</a>
+    <a href="/cdn-cgi/l/email-protection#d1a5b4b0bce3e0bebfbdb8bfb491b6bcb0b8bdffb2bebc">✉️ Email Team21</a>
+    <a href="https://inno4te.github.io/Team21-SL-Training/" target="_blank">🎓 Servant Leadership</a>
+    <a href="https://inno4te.github.io/Team21_PMP/" target="_blank">📋 PMP Training</a>
+    <a href="https://inno4te.github.io/team21-consulting/#c-impact" target="_blank">🌐 Team21 Impact</a>
+    <a href="https://jobs.un.org" target="_blank">🌍 UN Jobs</a>
+    <a href="https://reliefweb.int/jobs" target="_blank">🆘 ReliefWeb</a>
+  </div>
+  <p class="fCopy">© 2025 <strong>MaDskillz T21</strong> · A <strong>Team21 Academy</strong> Product · <strong>© Innocent Forteh</strong> · Make a Difference</p>
+</footer>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let tags = [];
+// Profile upload
+let profPdfB64 = null, profText = '';
+// Jobs upload
+let jobsPdfB64 = null, jobsText = '';
+// Upskill upload
+let usPdfB64 = null, usText = '';
+// CV builder upload
+let cvbPdfB64 = null, cvbText = null;
+// Generated content
+let generatedCV = '';
+let generatedCover = '';
+
+// ═══════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════
+const XFER = {
+  'sell':['sales','negotiation','customer service','market analysis','persuasion'],
+  'farm':['project management','logistics','supply chain','environmental management','data monitoring'],
+  'cook':['operations management','quality control','procurement','team coordination','health & safety'],
+  'driv':['logistics','route optimization','time management','fleet coordination','customer service'],
+  'teach':['training & development','facilitation','curriculum design','mentorship','communication'],
+  'tailor':['design thinking','client management','project management','quality assurance','entrepreneurship'],
+  'clean':['facilities management','health & safety compliance','attention to detail','time management'],
+  'care':['healthcare support','empathy','monitoring & evaluation','social work','patient coordination'],
+  'trade':['business development','financial literacy','negotiation','supply chain','market research'],
+  'repair':['technical problem solving','diagnostics','customer support','maintenance','quality control'],
+  'fish':['resource management','logistics','environmental monitoring','risk assessment'],
+  'lead':['people management','strategic planning','conflict resolution','stakeholder engagement'],
+  'excel':['data analysis','financial modeling','reporting','dashboard creation'],
+  'social':['digital marketing','content creation','community management','analytics'],
+  'account':['financial management','audit support','budgeting','compliance'],
+  'hair':['client relations','business management','customer experience','team coordination'],
+  'build':['project management','safety compliance','logistics','site supervision','estimation'],
+  'write':['content creation','communication','research','documentation'],
+  'secur':['risk assessment','surveillance','incident reporting','crisis management'],
+  'nurs':['patient care','clinical assessment','medical documentation','team collaboration'],
+  'market':['marketing strategy','customer acquisition','branding','analytics'],
+};
+
+const JOBS_DB = [
+  {title:"Community Outreach Officer",org:"UNHCR / UNDP",loc:"Nairobi, Kenya",cat:"NGO / UN",type:"Full-time",match:92,urgent:true,integrity:96,color:"#1565c0",ico:"🌍",url:"https://jobs.un.org",skills:["communication","community","Swahili"]},
+  {title:"Remote Data Entry Specialist",org:"World Bank Group",loc:"Remote / Worldwide",cat:"Remote",type:"Remote",match:88,urgent:false,integrity:98,color:"#00695c",ico:"🏦",url:"https://worldbank.org/en/about/careers",skills:["Excel","data","admin"]},
+  {title:"Livelihood Programme Officer",org:"IRC",loc:"Kampala, Uganda",cat:"NGO / UN",type:"Full-time",match:84,urgent:true,integrity:97,color:"#c62828",ico:"🤝",url:"https://rescue.org/careers",skills:["livelihoods","training","NGO"]},
+  {title:"Agricultural Extension Officer",org:"FAO Kenya",loc:"Kisumu, Kenya",cat:"Agriculture",type:"Full-time",match:80,urgent:false,integrity:95,color:"#2e7d32",ico:"🌾",url:"https://jobs.fao.org",skills:["agriculture","reporting","field"]},
+  {title:"Digital Marketing Assistant",org:"Andela",loc:"Remote — Africa",cat:"Tech / Remote",type:"Remote",match:76,urgent:false,integrity:92,color:"#6a1b9a",ico:"📱",url:"https://andela.com/talent/",skills:["social media","digital","content"]},
+  {title:"Sales Representative",org:"Equity Bank",loc:"Lagos, Nigeria",cat:"Finance",type:"Full-time",match:88,urgent:true,integrity:97,color:"#b71c1c",ico:"💰",url:"https://equitybankgroup.com/careers",skills:["sales","banking","customer"]},
+  {title:"Humanitarian Logistics Officer",org:"WFP",loc:"Juba, South Sudan",cat:"NGO / UN",type:"Full-time",match:79,urgent:true,integrity:98,color:"#e65100",ico:"🚛",url:"https://wfp.org/careers",skills:["logistics","supply chain","field"]},
+  {title:"Remote Customer Support",org:"Appen / Lionbridge",loc:"Remote — Worldwide",cat:"Remote",type:"Remote",match:82,urgent:false,integrity:91,color:"#00695c",ico:"💬",url:"https://appen.com",skills:["communication","English","remote"]},
+  {title:"Teacher / Training Facilitator",org:"Teach For Africa",loc:"Accra, Ghana",cat:"Education",type:"Full-time",match:77,urgent:false,integrity:96,color:"#1565c0",ico:"📚",url:"https://teachforall.org",skills:["teaching","facilitation","mentorship"]},
+  {title:"Community Health Coordinator",org:"WHO / Ministry of Health",loc:"Dar es Salaam",cat:"Health",type:"Full-time",match:75,urgent:false,integrity:97,color:"#00695c",ico:"🏥",url:"https://who.int/careers",skills:["health","coordination","community"]},
+  {title:"Project Support Officer",org:"EU Delegation",loc:"Abuja, Nigeria",cat:"Government",type:"Full-time",match:73,urgent:false,integrity:94,color:"#283593",ico:"🇪🇺",url:"https://eeas.europa.eu",skills:["reporting","admin","EU"]},
+  {title:"Freelance AI Data Annotator",org:"Scale AI / Remotasks",loc:"Remote — Worldwide",cat:"Remote",type:"Part-time",match:71,urgent:false,integrity:90,color:"#4527a0",ico:"🤖",url:"https://remotasks.com",skills:["AI","data","flexible"]},
+];
+
+const COURSES_DB = [
+  {prov:"Team21 Academy",name:"Servant Leadership Mastery",desc:"Lead from within. World-class certified training developed by Team21. Free for MaDskillz users.",url:"https://wa.me/237694294406?text=Hello%20Team21!%20Interested%20in%20Servant%20Leadership%20training.",tags:["free","cert","t21"],match:"All leadership & coordination roles",t21:true},
+  {prov:"Team21 Academy",name:"AI Unlocked — AI for Everyone",desc:"Use AI tools in your daily work and career. No coding needed. Stay ahead of the curve.",url:"https://wa.me/237694294406?text=Hello%20Team21!%20Interested%20in%20AI%20Unlocked%20training.",tags:["free","cert","t21"],match:"Future-proofing every career",t21:true},
+  {prov:"Team21 Academy",name:"Project Management Professional",desc:"Team21's flagship PMP training. Globally recognized. Perfect for coordination and management roles.",url:"https://inno4te.github.io/Team21_PMP/",tags:["free","cert","t21"],match:"Project Officer, Coordinator, Manager",t21:true},
+  {prov:"Harvard University (edX)",name:"CS50: Intro to Computer Science",desc:"World's most popular coding course. No experience needed. Earn a verified Harvard certificate.",url:"https://cs50.harvard.edu/x/",tags:["free","cert"],match:"Tech, data, remote roles"},
+  {prov:"DisasterReady.org",name:"Humanitarian Response Essentials",desc:"Master humanitarian principles and emergency response. Required by most INGOs globally.",url:"https://www.disasterready.org/",tags:["free","cert"],match:"NGO, UN, INGO roles"},
+  {prov:"DisasterReady.org",name:"PSEA Certification",desc:"Protection from Sexual Exploitation & Abuse. Required for virtually all UN/NGO roles.",url:"https://www.disasterready.org/",tags:["free","cert"],match:"All UN, WFP, UNHCR, IRC roles"},
+  {prov:"Google (Coursera)",name:"Google Project Management Certificate",desc:"6-month professional certificate. Recognized by NGOs, companies and governments worldwide.",url:"https://grow.google/certificates/project-management/",tags:["free","cert"],match:"Project Officer, Manager, Coordinator"},
+  {prov:"LinkedIn Learning",name:"Excel Essential Training",desc:"Master Microsoft Excel — the #1 most-requested skill in global job listings.",url:"https://learning.linkedin.com",tags:["free","cert"],match:"Admin, Finance, Data, NGO roles"},
+  {prov:"WHO / OpenWHO",name:"Health Emergencies & Epidemics",desc:"Free certified public health courses by WHO — outbreak response and community health.",url:"https://openwho.org",tags:["free","cert"],match:"Health Officer, Community Health"},
+  {prov:"Yale / Coursera",name:"Financial Markets",desc:"Nobel laureate Robert Shiller's famous course. Audit free. Deep finance foundations.",url:"https://coursera.org/learn/financial-markets-global",tags:["free","cert"],match:"Banking, Finance, Microfinance"},
+  {prov:"UN CC:Learn",name:"Climate Change & SDGs",desc:"Understand sustainable development goals — increasingly required in the development sector.",url:"https://www.uncclearn.org/",tags:["free","cert"],match:"UN, World Bank, Environment roles"},
+  {prov:"Alison",name:"Diploma in Human Resources",desc:"Comprehensive HR training: recruitment, performance management, and labour relations.",url:"https://alison.com",tags:["free","cert"],match:"HR Officer, People & Culture, Admin"},
+];
+
+// ═══════════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════════
+const SECMAP = {profile:'sec-profile',jobs:'sec-jobs',upskill:'sec-upskill',cv:'sec-cv'};
+function goto(key) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.navLink,.tabBtn').forEach(b=>b.classList.remove('active'));
+  const el = document.getElementById(SECMAP[key]);
+  if(el) el.classList.add('active');
+  const idx = {profile:0,jobs:1,upskill:2,cv:3}[key];
+  if(idx!==undefined){
+    document.querySelectorAll('.navLink')[idx]?.classList.add('active');
+    document.querySelectorAll('.tabBtn')[idx]?.classList.add('active');
+  }
+  if(key==='jobs') renderJobs();
+  if(key==='upskill') renderCourses();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function toggleMobile(){
+  document.getElementById('mmenu').classList.toggle('open');
+  document.getElementById('burger').classList.toggle('x');
+}
+function closeMobile(){
+  document.getElementById('mmenu').classList.remove('open');
+  document.getElementById('burger').classList.remove('x');
+}
+function setLang(l){document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';}
+
+// ═══════════════════════════════════════════════
+// SKILL TAGS
+// ═══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  const inp = document.getElementById('tagIn');
+  if(inp){
+    inp.addEventListener('keydown',e=>{
+      if(e.key==='Enter'||e.key===','){e.preventDefault();const v=inp.value.trim().replace(/,$/,'');if(v)addTag(v);inp.value='';}
+      else if(e.key==='Backspace'&&!inp.value&&tags.length) removeTag(tags.length-1);
+    });
+  }
+  renderCourses();
+  renderJobs();
+});
+function addTag(v){const k=v.toLowerCase().trim();if(k&&!tags.includes(k)){tags.push(k);renderTags();}}
+function removeTag(i){tags.splice(i,1);renderTags();}
+function renderTags(){
+  const wrap=document.getElementById('tagWrap'),inp=document.getElementById('tagIn');
+  wrap.querySelectorAll('.sTag').forEach(t=>t.remove());
+  tags.forEach((t,i)=>{
+    const el=document.createElement('div');el.className='sTag';
+    el.innerHTML=`${esc(t)} <button type="button" onclick="removeTag(${i})">×</button>`;
+    wrap.insertBefore(el,inp);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// UPLOAD HELPERS
+// ═══════════════════════════════════════════════
+function togglePanel(bodyId,arrowId){
+  const b=document.getElementById(bodyId),a=document.getElementById(arrowId);
+  const open=b.style.display!=='none';
+  b.style.display=open?'none':'block';
+  a?.classList.toggle('open',!open);
+}
+function dzOver(e,id){e.preventDefault();document.getElementById(id)?.classList.add('over');}
+function dzLeave(id){document.getElementById(id)?.classList.remove('over');}
+function dzDrop(e,id,fn){e.preventDefault();document.getElementById(id)?.classList.remove('over');const f=e.dataTransfer.files[0];if(f)fn(f);}
+function validateFile(f){
+  if(!f)return false;
+  if(!f.name.match(/\.(pdf|docx?|txt)$/i)){alert('Please upload a PDF, DOCX or TXT file.');return false;}
+  if(f.size>6*1024*1024){alert('File too large — keep it under 6 MB.');return false;}
+  return true;
+}
+function readB64(f,cb){const r=new FileReader();r.onload=e=>cb(e.target.result.split(',')[1]);r.readAsDataURL(f);}
+function readTxt(f,cb){const r=new FileReader();r.onload=e=>cb(e.target.result||'');r.readAsText(f);}
+function showPill(pillId,nameId,filename){
+  document.getElementById(pillId).style.display='flex';
+  document.getElementById(nameId).textContent=filename+' ('+Math.round(arguments[3]/1024)+' KB)';
+}
+
+// PROFILE UPLOAD
+function handleProfileFile(f){
+  if(!validateFile(f))return;
+  showPill('pUpPill','pUpName',f.name,f.size);
+  document.getElementById('analyzeBtn').style.display='inline-flex';
+  if(f.name.match(/\.pdf$/i)){readB64(f,b64=>{profPdfB64=b64;profText='__PDF__';});}
+  else{readTxt(f,t=>{profText=t;profPdfB64=null;});}
+}
+function clearProfileUpload(){
+  profPdfB64=null;profText='';
+  document.getElementById('pUpPill').style.display='none';
+  document.getElementById('analyzeBtn').style.display='none';
+  document.getElementById('pFile').value='';
+  document.getElementById('cvAnalysisOut').innerHTML='';
+}
+
+// JOBS UPLOAD
+function handleJobsFile(f){
+  if(!validateFile(f))return;
+  showPill('jsUpPill','jsUpName',f.name,f.size);
+  if(f.name.match(/\.pdf$/i)){readB64(f,b64=>{jobsPdfB64=b64;jobsText='__PDF__';});}
+  else{readTxt(f,t=>{jobsText=t;jobsPdfB64=null;});}
+}
+function clearJobsUpload(){
+  jobsPdfB64=null;jobsText='';
+  document.getElementById('jsUpPill').style.display='none';
+  document.getElementById('jsFile').value='';
+}
+
+// UPSKILL UPLOAD
+function handleUpskillFile(f){
+  if(!validateFile(f))return;
+  showPill('usUpPill','usUpName',f.name,f.size);
+  if(f.name.match(/\.pdf$/i)){readB64(f,b64=>{usPdfB64=b64;usText='__PDF__';});}
+  else{readTxt(f,t=>{usText=t;usPdfB64=null;});}
+}
+function clearUpskillUpload(){
+  usPdfB64=null;usText='';
+  document.getElementById('usUpPill').style.display='none';
+  document.getElementById('usFile').value='';
+}
+
+// CV BUILDER UPLOAD
+function handleCVFile(f){
+  if(!validateFile(f))return;
+  showPill('cvUpPill','cvUpName',f.name,f.size);
+  document.getElementById('cvUpOk').style.display='block';
+  if(f.name.match(/\.pdf$/i)){readB64(f,b64=>{cvbPdfB64=b64;cvbText=null;});}
+  else{
+    readTxt(f,t=>{
+      cvbText=t;cvbPdfB64=null;
+      // Smart autofill
+      const em=t.match(/[\w.+-]+@[\w-]+\.[a-z]{2,}/i);
+      if(em&&!document.getElementById('cvEmail').value)document.getElementById('cvEmail').value=em[0];
+      const ph=t.match(/\+?\d[\d\s\-()\/.]{7,15}\d/);
+      if(ph&&!document.getElementById('cvPhone').value)document.getElementById('cvPhone').value=ph[0].trim();
+    });
+  }
+}
+function clearCVUpload(){
+  cvbPdfB64=null;cvbText=null;
+  document.getElementById('cvUpPill').style.display='none';
+  document.getElementById('cvUpOk').style.display='none';
+  document.getElementById('cvFile').value='';
+  document.getElementById('cvEmail').value='';
+  document.getElementById('cvPhone').value='';
+}
+
+// ═══════════════════════════════════════════════
+// CV ANALYSIS
+// ═══════════════════════════════════════════════
+async function analyzeCV(){
+  if(!ANTHROPIC_API_KEY){alert('Please enter your Anthropic API key in the yellow bar at the top.\n\nGet a free key at: https://console.anthropic.com/account/keys');document.getElementById('apiKeyInput').focus();return;}
+  const hasPdf=!!profPdfB64, hasTxt=profText&&profText!=='__PDF__';
+  if(!hasPdf&&!hasTxt){alert('Please upload a CV file first.');return;}
+  const btn=document.getElementById('analyzeBtn');
+  btn.disabled=true;btn.textContent='⏳ Analyzing…';
+  const out=document.getElementById('cvAnalysisOut');
+  out.innerHTML='<div class="spinWrap"><div class="spinner"></div><div class="spinLbl">AI is reading your CV…</div><div class="spinSub">Scoring · Gap analysis · Job matching · Rewriting weak sections</div></div>';
+  out.scrollIntoView({behavior:'smooth'});
+  const prompt=`You are a senior career coach at Team21 Academy MaDskillz. Analyze the provided CV thoroughly.
+Return ONLY valid JSON (no markdown, no preamble):
+{"name":"candidate name or Unknown","score":72,"scoreLabel":"Good but improvable","summary":"2-3 honest sentences","strengths":["s1","s2","s3","s4"],"weaknesses":["w1","w2","w3"],"missingKeywords":["k1","k2","k3","k4"],"jobMatches":["Role (sector)","Role","Role","Role","Role"],"upskillRecs":["Course — why it helps","Course — why","Course — why"],"quickWins":["fix1","fix2","fix3"],"rewrittenSummary":"Punchy 3-4 sentence ATS-optimized professional summary"}
+Score 1-100. Be honest, specific and encouraging.`;
+  let messages;
+  if(hasPdf){messages=[{role:"user",content:[{type:"document",source:{type:"base64",media_type:"application/pdf",data:profPdfB64}},{type:"text",text:prompt}]}];}
+  else{messages=[{role:"user",content:prompt+"\n\nCV:\n"+profText}];}
+  try{
+    const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:getApiHeaders(),body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1500,messages})});
+    if(!r.ok)throw new Error('API '+r.status);
+    const d=await r.json();
+    const raw=(d.content||[]).map(b=>b.text||'').join('');
+    let a;try{a=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch{a=fallbackAnalysis();}
+    renderAnalysis(a);
+  }catch(e){
+    out.innerHTML=`<div class="alert aErr">⚠️ Analysis hit an issue (${esc(e.message)}). Please try again or use the form below.</div>`;
+  }
+  btn.disabled=false;btn.textContent='🤖 Analyze & Score My CV';
+}
+
+function fallbackAnalysis(){
+  return{name:"Your Profile",score:65,scoreLabel:"Has potential — needs polish",
+    summary:"Your CV has been reviewed. There are solid foundations but several improvements will significantly boost your interview rate.",
+    strengths:["Experience documented","Skills present","Career history visible","Commitment evident"],
+    weaknesses:["Achievements need quantifying","Professional summary missing or weak","Target-role keywords absent"],
+    missingKeywords:["results-oriented","stakeholder management","monitoring & evaluation","impact-driven"],
+    jobMatches:["Community Programme Officer (NGO)","Admin & Coordination Role","Outreach & Field Work","Sales & Business Development","Remote Support Specialist"],
+    upskillRecs:["CS50 Harvard — adds tech credibility to any CV","Google PM Certificate — globally recognised","Team21 Servant Leadership — top 10% leadership skills"],
+    quickWins:["Add a 3-sentence professional summary at the top","Quantify every achievement with numbers","Start every bullet with a strong action verb"],
+    rewrittenSummary:"Results-driven professional with proven experience in community engagement, coordination and stakeholder communication. Demonstrated ability to deliver measurable outcomes in dynamic, resource-constrained environments. Multilingual and adaptable, currently pursuing internationally recognised certifications to advance career impact."};
+}
+
+function renderAnalysis(a){
+  const score=Math.max(1,Math.min(100,a.score||65));
+  const circ=2*Math.PI*38;
+  const dash=(score/100)*circ;
+  const col=score>=75?'#00BF91':score>=50?'#F0A500':'#FF4500';
+  document.getElementById('cvAnalysisOut').innerHTML=`
+  <div class="analysisCard">
+    <h3>🤖 AI CV Evaluation — ${esc(a.name||'Your Profile')}</h3>
+    <div style="display:flex;align-items:center;gap:1.2rem;margin-bottom:1rem;flex-wrap:wrap;">
+      <div class="scoreRing">
+        <svg width="92" height="92" viewBox="0 0 92 92">
+          <circle cx="46" cy="46" r="38" fill="none" stroke="#eee" stroke-width="8"/>
+          <circle cx="46" cy="46" r="38" fill="none" stroke="${col}" stroke-width="8" stroke-dasharray="${dash.toFixed(1)} ${circ.toFixed(1)}" stroke-linecap="round"/>
+        </svg>
+        <div class="sn">${score}<small>/100</small></div>
+      </div>
+      <div style="flex:1;min-width:200px;">
+        <div style="font-family:'Fraunces',serif;font-weight:700;font-size:.95rem;margin-bottom:.3rem;">${esc(a.scoreLabel||'CV Score')}</div>
+        <p style="font-size:.82rem;color:#666;line-height:1.55;">${esc(a.summary||'')}</p>
+      </div>
+    </div>
+    <div class="aGrid">
+      <div class="aBlock"><h4 class="g">✅ What's Working</h4>${(a.strengths||[]).map(s=>`<div class="aItem"><span>✓</span>${esc(s)}</div>`).join('')}</div>
+      <div class="aBlock"><h4 class="r">⚠️ Gaps to Fix</h4>${(a.weaknesses||[]).map(s=>`<div class="aItem"><span>✗</span>${esc(s)}</div>`).join('')}</div>
+      <div class="aBlock"><h4 class="b">💼 Best Job Matches</h4>${(a.jobMatches||[]).map(s=>`<div class="aItem"><span>→</span>${esc(s)}</div>`).join('')}</div>
+      <div class="aBlock"><h4 class="a">⚡ Quick Wins</h4>${(a.quickWins||[]).map(s=>`<div class="aItem"><span>★</span>${esc(s)}</div>`).join('')}</div>
+    </div>
+    <div class="aGrid" style="margin-top:1rem;">
+      <div class="aBlock"><h4 class="a">🔑 Add These Keywords</h4><div style="display:flex;flex-wrap:wrap;gap:.28rem;margin-top:.28rem;">${(a.missingKeywords||[]).map(k=>`<span class="pill pNew">+ ${esc(k)}</span>`).join('')}</div></div>
+      <div class="aBlock"><h4 class="b">🚀 Upskill Recommendations</h4>${(a.upskillRecs||[]).map(s=>`<div class="aItem"><span>📚</span>${esc(s)}</div>`).join('')}</div>
+    </div>
+    ${a.rewrittenSummary?`<div class="rewriteBox"><div class="rewriteLabel">✨ AI-Rewritten Professional Summary</div><div style="font-size:.86rem;line-height:1.65;">${esc(a.rewrittenSummary)}</div></div>`:''}
+    <div class="btnRow" style="margin-top:1.4rem;">
+      <button class="btn bFire bSm" onclick="goto('jobs')">💼 Find Matching Jobs</button>
+      <button class="btn bOutline bSm" onclick="goto('upskill')">🚀 Free Courses</button>
+      <button class="btn bDark bSm" onclick="goto('cv')">📄 Build New CV</button>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════
+// BUILD PROFILE
+// ═══════════════════════════════════════════════
+async function buildProfile(){
+  if(!ANTHROPIC_API_KEY){alert('Please enter your Anthropic API key in the yellow bar at the top.\n\nGet a free key at: https://console.anthropic.com/account/keys');document.getElementById('apiKeyInput').focus();return;}
+  const name=document.getElementById('pName').value.trim();
+  const country=document.getElementById('pCountry').value;
+  if(!name){alert('Please enter your name.');return;}
+  if(!country){alert('Please select your country.');return;}
+  if(!tags.length){alert('Please add at least one skill!');return;}
+
+  const btn=document.getElementById('profileBtn');
+  btn.disabled=true;btn.textContent='⏳ Building your profile…';
+
+  const email=document.getElementById('pEmail').value.trim();
+  const city=document.getElementById('pCity').value.trim();
+  const edu=document.getElementById('pEdu').value;
+  const field=document.getElementById('pField').value.trim();
+  const exp=document.getElementById('pExp').value.trim();
+  const langs=document.getElementById('pLangs').value.trim();
+  const jtype=document.getElementById('pJobtype').value;
+  const dream=document.getElementById('pDream').value.trim();
+
+  const result=document.getElementById('profileResult');
+  result.style.display='block';
+  result.innerHTML='<div class="spinWrap"><div class="spinner"></div><div class="spinLbl">Converting your skills to professional gold…</div><div class="spinSub">Skill analysis · Job matching · CV generation in progress</div></div>';
+  result.scrollIntoView({behavior:'smooth'});
+
+  // Transferable skills
+  const xfer=new Set();
+  tags.forEach(tag=>{
+    Object.entries(XFER).forEach(([key,vals])=>{
+      if(tag.includes(key)||key.includes(tag.slice(0,4)))vals.forEach(v=>xfer.add(v));
+    });
+  });
+  const expLow=exp.toLowerCase();
+  if(expLow.includes('manag'))xfer.add('team management');
+  if(expLow.includes('train')||expLow.includes('teach'))xfer.add('training & development');
+  if(expLow.includes('report'))xfer.add('reporting & documentation');
+  if(expLow.includes('budget')||expLow.includes('financ'))xfer.add('financial management');
+  if(expLow.includes('client')||expLow.includes('customer'))xfer.add('client relationship management');
+  if((langs||'').split(',').filter(l=>l.trim()).length>1)xfer.add('multilingual communication');
+
+  const score=Math.min(94,52+tags.length*4+(edu.includes('Bachelor')||edu.includes('Master')?10:0)+(xfer.size>5?8:0)+(exp.length>100?5:0));
+  const initials=name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2)||'?';
+  const xferArr=[...xfer];
+
+  // Auto-populate CV fields
+  if(name)document.getElementById('cvName').value=name;
+  if(email)document.getElementById('cvEmail').value=email;
+  if(city||country)document.getElementById('cvLoc').value=[city,country].filter(Boolean).join(', ');
+  if(exp)document.getElementById('cvExp').value=exp;
+  if(dream)document.getElementById('cvJobtitle').value=dream;
+
+  result.innerHTML=`
+    <div class="profBanner">
+      <div class="profAva">${initials}</div>
+      <div class="profInfo">
+        <h2>${esc(name)}</h2>
+        <p>📍 ${esc(city?city+', ':'')}${esc(country)} &nbsp;·&nbsp; 🎓 ${esc(edu||'Education not specified')} &nbsp;·&nbsp; 🌐 ${esc(langs||'Languages not listed')}</p>
+        <p>${dream?'🎯 Goal: '+esc(dream):''}${jtype?' · Seeking: '+esc(jtype):''}</p>
+      </div>
+      <div class="profPct">Top ${100-score}%<br><small>CURRENT STANDING</small>
+        <div style="font-size:.6rem;opacity:.7;margin-top:.22rem;">With upskilling → Top 10%</div>
+      </div>
+    </div>
+    <div class="statsRow">
+      <div class="statBox"><div class="sv">${tags.length}</div><div class="sl">Raw Skills</div></div>
+      <div class="statBox"><div class="sv">${xfer.size}</div><div class="sl">Transferable Skills</div></div>
+      <div class="statBox"><div class="sv">${JOBS_DB.filter(j=>j.match>=70).length}+</div><div class="sl">Job Matches</div></div>
+    </div>
+    <div class="skillsCard">
+      <h3>🏷️ Your Raw Skills</h3>
+      <div style="margin-bottom:1rem;">${tags.map(t=>`<span class="pill pRaw">${esc(t)}</span>`).join('')}</div>
+      <h3>🔄 MaDskillz Converted → Professional Competencies</h3>
+      <div style="margin-bottom:1rem;">${xferArr.map(t=>`<span class="pill pXfer">✓ ${esc(t)}</span>`).join('')}</div>
+      <h3 style="color:var(--jade2);">🚀 Skills to Gain via Free Courses</h3>
+      <div>${['project management','data analysis','AI literacy','humanitarian principles','servant leadership','digital communication','financial management'].map(s=>`<span class="pill pNew">+ ${s}</span>`).join('')}</div>
+    </div>
+    <h3 style="font-family:'Fraunces',serif;font-weight:800;font-size:1rem;margin-bottom:1rem;color:var(--ink);">💼 Top Matched Jobs For You</h3>
+    <div class="jobsGrid">${JOBS_DB.slice(0,5).map(renderJobCard).join('')}</div>
+    <div class="btnRow" style="margin-top:1.5rem;">
+      <button class="btn bFire" onclick="goto('cv')">📄 Generate My Full CV Now</button>
+      <button class="btn bOutline bSm" onclick="goto('jobs')">🔍 See All Jobs</button>
+      <button class="btn bDark bSm" onclick="goto('upskill')">🚀 My Free Courses</button>
+    </div>
+    <div class="t21Strip" style="margin-top:2rem;">
+      <h3>🟠 Team21 Academy — Unlock the Top 10%</h3>
+      <p>The fastest path to the top 10% runs through Team21. Free certified Servant Leadership, AI, and Project Management training — tailored for professionals like you.</p>
+      <div class="t21Links">
+        <a href="https://wa.me/237694294406?text=Hello%20Team21!%20I%20used%20MaDskillz%20and%20want%20to%20learn%20more%20about%20your%20free%20training." target="_blank" class="t21Lnk t21Wa">💬 WhatsApp +237 694 294 406</a>
+        <a href="mailto:team21online@gmail.com?subject=MaDskillz%20Profile%20Complete" class="t21Lnk t21Em">✉️ team21online@gmail.com</a>
+        <a href="https://inno4te.github.io/Team21-SL-Training/" target="_blank" class="t21Lnk t21Co">🎓 Servant Leadership</a>
+        <a href="https://inno4te.github.io/Team21_PMP/" target="_blank" class="t21Lnk t21Co">📋 PMP Training</a>
+      </div>
+    </div>`;
+
+  btn.disabled=false;btn.textContent='✨ Create My MaDskillz CV & Find Jobs';
+}
+
+// ═══════════════════════════════════════════════
+// JOB CARDS & RENDERING
+// ═══════════════════════════════════════════════
+function renderJobCard(j){
+  const intCol=j.integrity>=95?'var(--jade2)':j.integrity>=85?'var(--gold)':'var(--ember)';
+  const intLabel=j.integrity>=95?'✅ Very High':'⚠️ Moderate';
+  return `<a class="jobCard" href="${j.url}" target="_blank" rel="noopener">
+    <div class="jobIco" style="background:${j.color}20">${j.ico}</div>
+    <div class="jobBody">
+      <div class="jobTitle">${esc(j.title)}</div>
+      <div class="jobOrg">${esc(j.org)} · 📍 ${esc(j.loc)}</div>
+      <div class="jobTags">
+        <span class="jTag jMatch">✓ ${j.match}% match</span>
+        ${j.type==='Remote'?'<span class="jTag jRemote">🌐 Remote</span>':''}
+        ${j.type==='Hybrid'?'<span class="jTag jHybrid">🔀 Hybrid</span>':''}
+        ${j.type==='Full-time'?'<span class="jTag jFull">⏱ Full-time</span>':''}
+        ${j.urgent?'<span class="jTag jUrgent">🔥 Urgent</span>':''}
+        ${j.skills.map(s=>`<span class="jTag jFull">${esc(s)}</span>`).join('')}
+      </div>
+      <div class="jInteg" style="color:${intCol}">Integrity: ${intLabel} (${j.integrity}%)</div>
+    </div>
+    <div class="jobRight">
+      <div class="jobPct">${j.match}%<small>match</small></div>
+      <a class="applyBtn" href="${j.url}" target="_blank" rel="noopener">Apply →</a>
+    </div>
+  </a>`;
+}
+function renderJobs(){
+  const q=(document.getElementById('jsQuery')?.value||'').toLowerCase();
+  const loc=(document.getElementById('jsLoc')?.value||'').toLowerCase();
+  const type=document.getElementById('jsType')?.value||'';
+  const jobs=JOBS_DB
+    .filter(j=>(!q||j.title.toLowerCase().includes(q)||j.org.toLowerCase().includes(q)||j.skills.some(s=>s.toLowerCase().includes(q)))
+      &&(!loc||j.loc.toLowerCase().includes(loc))
+      &&(!type||j.type===type||j.cat===type||j.cat.includes(type)))
+    .sort((a,b)=>b.match-a.match);
+  const grid=document.getElementById('jobsResult');
+  if(grid)grid.innerHTML=jobs.length?jobs.map(renderJobCard).join('')+'<div class="alert aInfo" style="margin-top:1rem;">🌐 These results combine our curated database with your profile. Hit <strong>MaDSearch</strong> to get AI-powered live results from the web.</div>':'<p style="color:#aaa;padding:2rem;text-align:center;">No matching jobs found. Try different keywords.</p>';
+}
+
+// ═══════════════════════════════════════════════
+// MADSEARCH (AI-powered live job search)
+// ═══════════════════════════════════════════════
+async function madSearch(){
+  if(!ANTHROPIC_API_KEY){alert('Please enter your Anthropic API key in the yellow bar at the top.\n\nGet a free key at: https://console.anthropic.com/account/keys');document.getElementById('apiKeyInput').focus();return;}
+  const query=document.getElementById('jsQuery').value.trim();
+  const loc=document.getElementById('jsLoc').value.trim();
+  const type=document.getElementById('jsType').value;
+  const hasCv=!!(jobsPdfB64||jobsText);
+  if(!query&&!hasCv){alert('Please enter a job title/keywords, or upload your CV to power the search.');return;}
+
+  const btn=document.getElementById('madSearchBtn');
+  btn.disabled=true;btn.textContent='🔍 Searching…';
+  document.getElementById('jobsLoading').style.display='block';
+  document.getElementById('jobsResult').innerHTML='';
+
+  const cvContext=hasCv&&jobsText&&jobsText!=='__PDF__'?`\n\nCANDIDATE CV:\n${jobsText.substring(0,2500)}`:'';
+  const prompt=`You are MaDskillz, a job search AI for Team21 Academy. Find realistic job opportunities for this candidate.
+Query: "${query||'open to opportunities'}" | Location: "${loc||'worldwide'}" | Type: "${type||'all'}"${cvContext}
+
+Return ONLY valid JSON array (no markdown):
+[
+  {"title":"Job Title","org":"Organisation Name","location":"City, Country or Remote","type":"Full-time|Part-time|Remote|Hybrid","match":85,"integrity":96,"url":"https://actual-job-url.com","description":"2 sentence description of the role","skills":["skill1","skill2","skill3"],"upskill":"One free course to qualify better","urgent":false}
+]
+Return 8-10 realistic jobs. Match score 0-100. Integrity score = how verified/legitimate the opportunity is (90-99 for major employers). Include a mix of remote and location-based. Use real job board URLs (jobs.un.org, reliefweb.int, worldbank.org/careers, careers.ilo.org, linkedin.com/jobs, etc.).`;
+
+  let messages=[{role:"user",content:prompt}];
+  if(jobsPdfB64){messages=[{role:"user",content:[{type:"document",source:{type:"base64",media_type:"application/pdf",data:jobsPdfB64}},{type:"text",text:prompt}]}];}
+
+  try{
+    const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:getApiHeaders(),body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2000,messages})});
+    if(!r.ok)throw new Error('API '+r.status);
+    const d=await r.json();
+    const raw=(d.content||[]).map(b=>b.text||'').join('');
+    let jobs;
+    try{jobs=JSON.parse(raw.replace(/```json|```/g,'').trim());}
+    catch{jobs=null;}
+    if(jobs&&Array.isArray(jobs)&&jobs.length){
+      document.getElementById('jobsResult').innerHTML=
+        `<div class="alert aOk" style="margin-bottom:1rem;">✅ MaDSearch found ${jobs.length} opportunities matching your profile. Ranked by % match. Click <strong>Apply →</strong> to go to the actual listing.</div>`+
+        jobs.map(j=>renderAIJobCard(j)).join('');
+    } else {
+      renderJobs();
+    }
+  }catch(e){
+    renderJobs();
+    document.getElementById('jobsResult').innerHTML+='<div class="alert aErr">⚠️ Live search hit a snag — showing our curated database instead.</div>';
+  }
+  document.getElementById('jobsLoading').style.display='none';
+  btn.disabled=false;btn.textContent='🔍 MaDSearch';
+}
+
+function renderAIJobCard(j){
+  const intCol=j.integrity>=95?'var(--jade2)':j.integrity>=85?'var(--gold)':'var(--ember)';
+  const intLabel=j.integrity>=95?'✅ Very High':j.integrity>=85?'⚠️ Moderate':'❓ Unverified';
+  const typeClass=j.type==='Remote'?'jRemote':j.type==='Hybrid'?'jHybrid':j.type==='Part-time'?'jFull':'jFull';
+  const icons=['🌍','🏢','💼','🤝','🌐','📋','💡','🏦','🌾','📚'];
+  const ico=icons[Math.floor(Math.random()*icons.length)];
+  return `<a class="jobCard" href="${j.url||'#'}" target="_blank" rel="noopener">
+    <div class="jobIco" style="background:rgba(255,69,0,.1)">${ico}</div>
+    <div class="jobBody">
+      <div class="jobTitle">${esc(j.title)}</div>
+      <div class="jobOrg">${esc(j.org)} · 📍 ${esc(j.location)}</div>
+      <p style="font-size:.76rem;color:#888;margin-top:.3rem;line-height:1.5;">${esc(j.description||'')}</p>
+      <div class="jobTags">
+        <span class="jTag jMatch">✓ ${j.match}% match</span>
+        <span class="jTag ${typeClass}">${esc(j.type)}</span>
+        ${j.urgent?'<span class="jTag jUrgent">🔥 Urgent</span>':''}
+        ${(j.skills||[]).map(s=>`<span class="jTag jFull">${esc(s)}</span>`).join('')}
+      </div>
+      ${j.upskill?`<div style="font-size:.72rem;color:var(--jade2);margin-top:.38rem;font-weight:600;">📚 Upskill: ${esc(j.upskill)}</div>`:''}
+      <div class="jInteg" style="color:${intCol}">Integrity: ${intLabel} (${j.integrity}%)</div>
+    </div>
+    <div class="jobRight">
+      <div class="jobPct">${j.match}%<small>match</small></div>
+      <a class="applyBtn" href="${j.url||'#'}" target="_blank" rel="noopener">Apply →</a>
+    </div>
+  </a>`;
+}
+
+// ═══════════════════════════════════════════════
+// COURSES
+// ═══════════════════════════════════════════════
+function renderCourses(){
+  const grid=document.getElementById('coursesGrid');
+  if(!grid)return;
+  grid.innerHTML=COURSES_DB.map(c=>`
+    <div class="courseCard${c.t21?' t21':''}">
+      <div class="cProv">${esc(c.prov)}</div>
+      <div class="cName">${esc(c.name)}</div>
+      <div class="cDesc">${esc(c.desc)}</div>
+      <div style="font-size:.7rem;color:#aaa;">Best for: ${esc(c.match)}</div>
+      <div class="cMeta">${c.tags.map(t=>`<span class="cBadge ${t==='free'?'cFree':t==='cert'?'cCert':t==='t21'?'cT21':''}">${t==='free'?'🆓 Free':t==='cert'?'🎓 Certified':t==='t21'?'🟠 Team21':t}</span>`).join('')}</div>
+      <a class="cLink" href="${c.url}" target="_blank" rel="noopener">🚀 Start Now →</a>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// UPSKILL ME
+// ═══════════════════════════════════════════════
+async function runUpskill(){
+  if(!ANTHROPIC_API_KEY){alert('Please enter your Anthropic API key in the yellow bar at the top.\n\nGet a free key at: https://console.anthropic.com/account/keys');document.getElementById('apiKeyInput').focus();return;}
+  const dream=document.getElementById('usDream').value.trim();
+  if(!dream){alert('Please enter your dream job or target role.');return;}
+  const jd=document.getElementById('usJd').value.trim();
+  const exp=document.getElementById('usExp').value.trim();
+  const hasCv=!!(usPdfB64||(usText&&usText!=='__PDF__'));
+  if(!hasCv&&!exp){alert('Please upload your CV or describe your experience.');return;}
+
+  const btn=document.getElementById('upskillBtn');
+  btn.disabled=true;btn.textContent='⏳ Upgrading…';
+  const loadEl=document.getElementById('upskillLoading');
+  const resEl=document.getElementById('upskillResult');
+  loadEl.style.display='block';resEl.innerHTML='';
+
+  const cvContext=(usText&&usText!=='__PDF__')?`\n\nCURRENT CV:\n${usText.substring(0,3000)}`:'';
+  const prompt=`You are an expert career coach at Team21 Academy MaDskillz. Do 3 things:
+1. Write an upgraded, ATS-optimized CV tailored to the target role
+2. Write a warm, humanized cover letter
+3. List 5 free certification courses to close skill gaps
+
+${hasCv?'The candidate has uploaded their CV. Extract and use all relevant info.':''}
+Target Role: ${dream}
+Job Description/Link: ${jd||'Not provided'}
+Experience: ${exp||'See uploaded CV'}${cvContext}
+
+Return ONLY valid JSON (no markdown):
+{
+  "upgradedCV": "Full upgraded CV as plain text with sections in ALL CAPS as headers, bullets starting with •",
+  "coverLetter": "Full humanized cover letter as plain text — warm, specific, compelling — 3-4 paragraphs",
+  "freeCourses": [
+    {"name":"Course name","provider":"Provider","url":"https://...","reason":"Why it helps for this role"}
+  ],
+  "keyImprovements": ["improvement1","improvement2","improvement3"]
+}`;
+
+  let messages=[{role:"user",content:prompt}];
+  if(usPdfB64)messages=[{role:"user",content:[{type:"document",source:{type:"base64",media_type:"application/pdf",data:usPdfB64}},{type:"text",text:prompt}]}];
+
+  try{
+    const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:getApiHeaders(),body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:3000,messages})});
+    if(!r.ok)throw new Error('API '+r.status);
+    const d=await r.json();
+    const raw=(d.content||[]).map(b=>b.text||'').join('');
+    let result;
+    try{result=JSON.parse(raw.replace(/```json|```/g,'').trim());}
+    catch{result=null;}
+    if(result){
+      renderUpskillResult(result,dream);
+    } else {
+      resEl.innerHTML='<div class="alert aErr">⚠️ Processing issue. Please try again.</div>';
+    }
+  }catch(e){
+    resEl.innerHTML=`<div class="alert aErr">⚠️ ${esc(e.message)} — Please try again.</div>`;
+  }
+  loadEl.style.display='none';
+  btn.disabled=false;btn.textContent='🚀 Upgrade My CV & Write Cover Letter';
+}
+
+function renderUpskillResult(r,dream){
+  const el=document.getElementById('upskillResult');
+  let html='';
+  if(r.keyImprovements){
+    html+=`<div class="analysisCard" style="margin-bottom:1.5rem;">
+      <h3>✅ Key Improvements Made</h3>
+      ${r.keyImprovements.map(i=>`<div class="aItem" style="font-size:.84rem;padding:.3rem 0;border-bottom:1px solid #eee;"><span style="color:var(--jade2);">✓</span> ${esc(i)}</div>`).join('')}
+    </div>`;
+  }
+  if(r.upgradedCV){
+    generatedCV=r.upgradedCV;
+    const cvName=document.getElementById('cvName').value||'Your Name';
+    const cvEmail=document.getElementById('cvEmail').value||'';
+    const cvPhone=document.getElementById('cvPhone').value||'';
+    const cvLoc=document.getElementById('cvLoc').value||'';
+    html+=`<div style="margin-bottom:1.5rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem;">
+        <h3 style="font-family:'Fraunces',serif;font-weight:800;font-size:1rem;color:var(--ink);">📄 Upgraded CV — Tailored for: ${esc(dream)}</h3>
+        <div class="btnRow">
+          <button class="btn bJade bSm" onclick="downloadDocx()">⬇️ Word</button>
+          <button class="btn bCobalt bSm" onclick="downloadPDF()">📄 PDF</button>
+        </div>
+      </div>
+      ${buildCVHtml(cvName,cvEmail,cvPhone,cvLoc,dream,r.upgradedCV)}
+    </div>`;
+  }
+  if(r.coverLetter){
+    generatedCover=r.coverLetter;
+    html+=`<div style="margin-bottom:1.5rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem;">
+        <h3 style="font-family:'Fraunces',serif;font-weight:800;font-size:1rem;color:var(--jade2);">✉️ Humanized Cover Letter</h3>
+        <button class="btn bDark bSm" onclick="downloadCover()">⬇️ Download Letter</button>
+      </div>
+      <div class="coverDoc" style="display:block;">
+        <h3>Cover Letter — ${esc(dream)}</h3>
+        ${r.coverLetter.split('\n').filter(l=>l.trim()).map(l=>`<p style="margin-bottom:.75rem;">${esc(l)}</p>`).join('')}
+      </div>
+    </div>`;
+  }
+  if(r.freeCourses&&r.freeCourses.length){
+    html+=`<div>
+      <h3 style="font-family:'Fraunces',serif;font-weight:800;font-size:1rem;margin-bottom:1rem;color:var(--ink);">🚀 Recommended Free Courses for ${esc(dream)}</h3>
+      <div class="courseGrid">${r.freeCourses.map(c=>`
+        <div class="courseCard">
+          <div class="cProv">${esc(c.provider)}</div>
+          <div class="cName">${esc(c.name)}</div>
+          <div class="cDesc">${esc(c.reason)}</div>
+          <div class="cMeta"><span class="cBadge cFree">🆓 Free</span><span class="cBadge cCert">🎓 Certified</span></div>
+          <a class="cLink" href="${c.url}" target="_blank" rel="noopener">🚀 Start Now →</a>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }
+  el.innerHTML=html;
+}
+
+// ═══════════════════════════════════════════════
+// CV BUILDER
+// ═══════════════════════════════════════════════
+async function buildCV(){
+  if(!ANTHROPIC_API_KEY){alert('Please enter your Anthropic API key in the yellow bar at the top.\n\nGet a free key at: https://console.anthropic.com/account/keys');document.getElementById('apiKeyInput').focus();return;}
+  const name=document.getElementById('cvName').value.trim();
+  const email=document.getElementById('cvEmail').value.trim();
+  const phone=document.getElementById('cvPhone').value.trim();
+  const loc=document.getElementById('cvLoc').value.trim();
+  const jobtitle=document.getElementById('cvJobtitle').value.trim();
+  const jd=document.getElementById('cvJd').value.trim();
+  const exp=document.getElementById('cvExp').value.trim();
+  const edu=document.getElementById('cvEdu').value.trim();
+  const skills=document.getElementById('cvSkills').value.trim();
+  const linkedin=document.getElementById('cvLinkedin').value.trim();
+  const web=document.getElementById('cvWeb').value.trim();
+  const wantCover=document.getElementById('optCover').checked;
+  const wantJobs=document.getElementById('optJobs').checked;
+  const hasUpload=!!(cvbPdfB64||cvbText);
+
+  if(!name){alert('Please enter your full name.');return;}
+  if(!jobtitle){alert('Please enter a target job title.');return;}
+  if(!exp&&!hasUpload){alert('Please describe your experience, or upload your existing CV above.');return;}
+
+  const genBtn=document.getElementById('cvGenBtn');
+  const loadEl=document.getElementById('cvLoading');
+  const docEl=document.getElementById('cvDoc');
+  const coverEl=document.getElementById('coverDoc');
+  const actEl=document.getElementById('cvActions');
+  const errEl=document.getElementById('cvError');
+  const jobsEl=document.getElementById('cvJobsResult');
+
+  genBtn.disabled=true;genBtn.textContent='⏳ Generating…';
+  loadEl.style.display='block';
+  docEl.style.display='none';coverEl.style.display='none';actEl.style.display='none';errEl.style.display='none';jobsEl.innerHTML='';
+  loadEl.scrollIntoView({behavior:'smooth',block:'center'});
+
+  const cvContext=cvbText?`\n\nEXISTING CV (extract all useful info):\n${cvbText.substring(0,3000)}`:'';
+  const prompt=`You are an expert career coach at Team21 Academy MaDskillz.
+Write a brand-new, professional, ATS-optimized CV${wantCover?' AND a warm humanized cover letter':''} tailored to the target job.
+${hasUpload?'IMPORTANT: Uploaded CV provided — extract ALL useful info and merge with details below.':''}
+
+Name: ${name} | Email: ${email||'N/A'} | Phone: ${phone||'N/A'} | Location: ${loc||'N/A'}
+${linkedin?'LinkedIn: '+linkedin:''}${web?' | Website: '+web:''}
+Target Job: ${jobtitle}
+Job Description: ${jd||'General professional role'}
+Experience: ${exp||'See uploaded CV'}
+Education: ${edu||'Not specified'}
+Skills: ${skills||'Derive from all sources'}${cvContext}
+
+Rules:
+1. Merge ALL sources — uploaded CV + typed info
+2. Convert ALL informal experience into professional impact bullets
+3. Quantify every achievement (use estimates if needed: ~$200/day revenue, ~50 clients served)
+4. Strong active verbs: Led, Managed, Delivered, Grew, Trained, Built, Coordinated
+5. Tailor every word to the target job
+6. CV sections in order: PROFESSIONAL SUMMARY | CORE COMPETENCIES | PROFESSIONAL EXPERIENCE | EDUCATION & CERTIFICATIONS | SKILLS & LANGUAGES${linkedin||web?' | DIGITAL PRESENCE':''}
+7. Plain text only — no markdown. Use • for bullets. Clean line breaks.
+${wantCover?`8. After CV, add exactly this separator on its own line: ===COVER===
+Then write the cover letter: warm, specific, 3-4 paragraphs, addresses target role directly.`:''}`;
+
+  let messages=[{role:"user",content:prompt}];
+  if(cvbPdfB64)messages=[{role:"user",content:[{type:"document",source:{type:"base64",media_type:"application/pdf",data:cvbPdfB64}},{type:"text",text:prompt}]}];
+
+  try{
+    const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:getApiHeaders(),body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:2500,messages})});
+    if(!r.ok){const ed=await r.json().catch(()=>({}));throw new Error(ed?.error?.message||'HTTP '+r.status);}
+    const d=await r.json();
+    const fullText=(d.content||[]).map(b=>b.text||'').join('')||'';
+    if(!fullText.trim())throw new Error('Empty response from AI');
+
+    let cvText=fullText, coverText='';
+    if(wantCover&&fullText.includes('===COVER===')){
+      [cvText,coverText]=fullText.split('===COVER===');
+    }
+
+    generatedCV=`${name}\n${[email,phone,loc].filter(Boolean).join(' | ')}${jobtitle?'\nTarget: '+jobtitle:''}\n\n${cvText.trim()}`;
+    generatedCover=coverText.trim();
+
+    // Render CV
+    docEl.innerHTML=buildCVHtml(name,email,phone,loc,jobtitle,cvText,linkedin,web);
+    docEl.style.display='block';
+
+    // Render cover letter
+    if(coverText.trim()){
+      coverEl.innerHTML=`<h3 style="font-family:'Fraunces',serif;font-weight:700;font-size:.88rem;color:var(--jade2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem;">✉️ Cover Letter — ${esc(jobtitle)}</h3>`+
+        coverText.trim().split('\n').filter(l=>l.trim()).map(l=>`<p style="margin-bottom:.75rem;">${esc(l)}</p>`).join('');
+      coverEl.style.display='block';
+    }
+
+    actEl.style.cssText='display:flex;flex-wrap:wrap;gap:.65rem;margin-top:1.2rem;';
+    docEl.scrollIntoView({behavior:'smooth'});
+
+    // Find matching jobs if requested
+    if(wantJobs){
+      jobsEl.innerHTML=`<h3 style="font-family:'Fraunces',serif;font-weight:800;font-size:1rem;margin:1.5rem 0 .85rem;color:var(--ink);">💼 Jobs Matching Your New CV</h3><div class="jobsGrid">${JOBS_DB.slice(0,6).map(renderJobCard).join('')}</div><div class="alert aInfo" style="margin-top:.75rem;">🌐 Go to <strong>Find Jobs</strong> and hit MaDSearch to get AI-powered live results.</div>`;
+    }
+
+  }catch(e){
+    console.error(e);
+    errEl.textContent='⚠️ '+e.message+' — A template CV is shown. Edit and download it.';
+    errEl.style.display='flex';
+    const fallback=`PROFESSIONAL SUMMARY\nDynamic professional with proven hands-on experience and a consistent record of delivering results. Effective communicator and adaptable team player. Seeking to leverage transferable skills as a ${jobtitle||'professional'}.\n\nCORE COMPETENCIES\n• Communication & Stakeholder Engagement\n• Problem Solving & Critical Thinking\n• Adaptability & Cross-Cultural Competence\n• Time Management & Multitasking\n• Leadership & Team Coordination\n\nPROFESSIONAL EXPERIENCE\n${exp||'Add your experience above and regenerate.'}\n\nEDUCATION & CERTIFICATIONS\n${edu||'Add your education above and regenerate.'}\n\nSKILLS & LANGUAGES\n${skills||'Add your skills above and regenerate.'}`;
+    generatedCV=`${name}\n${[email,phone,loc].filter(Boolean).join(' | ')}\n\n${fallback}`;
+    docEl.innerHTML=buildCVHtml(name,email,phone,loc,jobtitle,fallback,linkedin,web);
+    docEl.style.display='block';
+    actEl.style.cssText='display:flex;flex-wrap:wrap;gap:.65rem;margin-top:1.2rem;';
+  }finally{
+    loadEl.style.display='none';
+    genBtn.disabled=false;genBtn.textContent='✨ Generate My Professional CV';
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CV HTML RENDERER
+// ═══════════════════════════════════════════════
+const HEADERS=new Set(['PROFESSIONAL SUMMARY','CORE COMPETENCIES','PROFESSIONAL EXPERIENCE','WORK EXPERIENCE','EXPERIENCE','EDUCATION & CERTIFICATIONS','EDUCATION','CERTIFICATIONS','ADDITIONAL SKILLS','SKILLS & LANGUAGES','SKILLS','LANGUAGES','VOLUNTEER EXPERIENCE','REFERENCES','ACHIEVEMENTS','DIGITAL PRESENCE','PUBLICATIONS']);
+
+function buildCVHtml(name,email,phone,loc,jobtitle,cvText,linkedin='',web=''){
+  const el=document.getElementById('cvDoc');
+  let html=`<h2>${esc(name)}</h2>`;
+  const contact=[email,phone,loc].filter(Boolean).map(esc).join(' &nbsp;|&nbsp; ');
+  if(contact)html+=`<div class="cvContact">${contact}</div>`;
+  if(linkedin||web){
+    const links=[];
+    if(linkedin)links.push(esc(linkedin));
+    if(web)links.push(esc(web));
+    html+=`<div class="cvContact">${links.join(' &nbsp;|&nbsp; ')}</div>`;
+  }
+  if(jobtitle)html+=`<div class="cvTarget">🎯 Target: ${esc(jobtitle)}</div>`;
+  html+='<hr style="border:none;border-top:3px solid var(--ember);margin:1rem 0;">';
+  let inSec=false;
+  (cvText||'').split('\n').forEach(line=>{
+    const t=line.trim();if(!t)return;
+    const up=t.toUpperCase();
+    const isHeader=HEADERS.has(up)||(t===up&&t.length>3&&t.length<70&&!/^[•\-*]/.test(t)&&!/^\d/.test(t));
+    if(isHeader){
+      if(inSec)html+='</div>';
+      html+=`<h3>${esc(t)}</h3><div class="cvSec">`;
+      inSec=true;
+    }else if(/^[•\-*]/.test(t)){
+      html+=`<span class="cvBullet">• ${esc(t.replace(/^[•\-*]\s*/,''))}</span>`;
+    }else{
+      html+=`<p style="margin:.2rem 0;">${esc(t)}</p>`;
+    }
+  });
+  if(inSec)html+='</div>';
+  html+=`<hr style="border:none;border-top:1px solid #eee;margin:1.5rem 0;"><p style="font-size:.68rem;color:#bbb;text-align:center;">Generated by MaDskillz T21 · Team21 Academy · Make a Difference · © Innocent Forteh</p>`;
+
+  if(el)el.innerHTML=html;
+  return `<div class="cvDoc" style="display:block;">${html}</div>`;
+}
+
+// ═══════════════════════════════════════════════
+// DOWNLOAD & PRINT
+// ═══════════════════════════════════════════════
+function downloadDocx(){
+  if(!generatedCV){alert('Please generate your CV first.');return;}
+  // Create RTF that Word can open
+  const rtf=`{\\rtf1\\ansi\\deff0
+{\\fonttbl{\\f0 Times New Roman;}{\\f1 Arial;}}
+{\\f0\\fs28\\b ${escRtf(generatedCV.split('\n')[0])}\\b0\\par}
+{\\f1\\fs20 ${generatedCV.split('\n').slice(1).map(l=>{
+  const t=l.trim();
+  if(!t)return'\\par';
+  const up=t.toUpperCase();
+  if(HEADERS.has(up)||(t===up&&t.length>3&&t.length<70))return`\\f0\\fs22\\b ${escRtf(t)}\\b0\\par`;
+  if(/^[•\-*]/.test(t))return`\\bullet  ${escRtf(t.replace(/^[•\-*]\s*/,''))}\\par`;
+  return`${escRtf(t)}\\par`;
+}).join('\n')}
+}
+}`;
+  const blob=new Blob([rtf],{type:'application/rtf'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='MaDskillz_CV_'+new Date().toISOString().slice(0,10)+'.rtf';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);document.body.removeChild(a);},3000);
+}
+function escRtf(s){return(s||'').replace(/\\/g,'\\\\').replace(/\{/g,'\\{').replace(/\}/g,'\\}');}
+
+function downloadPDF(){
+  if(!generatedCV){alert('Please generate your CV first.');return;}
+  const w=window.open('','_blank','width=900,height=700');
+  if(!w){alert('Pop-up blocked. Please allow pop-ups, then try again.');return;}
+  const content=document.getElementById('cvDoc').innerHTML;
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>CV — MaDskillz T21</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,0,700;9..144,0,900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>body{font-family:'Plus Jakarta Sans',sans-serif;max-width:780px;margin:2rem auto;padding:2rem;color:#111;font-size:13px;line-height:1.65;}h2{font-family:'Fraunces',serif;font-size:1.8rem;border-bottom:3px solid #FF4500;padding-bottom:.35rem;margin-bottom:.6rem;letter-spacing:-.03em;}h3{font-family:'Fraunces',serif;color:#FF4500;text-transform:uppercase;letter-spacing:.1em;font-size:.82rem;margin-top:1.3rem;border-bottom:1px solid rgba(255,69,0,.15);padding-bottom:.2rem;}.cvSec{padding-left:.7rem;border-left:3px solid #FDE98A;margin-bottom:.5rem;}.cvBullet{display:block;padding:.1rem 0;}.cvContact{font-size:.78rem;color:#777;}.cvTarget{font-weight:700;color:#FF4500;font-size:.82rem;}hr{border:none;border-top:1px solid #eee;margin:1rem 0;}@media print{body{margin:0;padding:1.2rem;}}</style>
+</head><body>${content}</body></html>`);
+  w.document.close();
+  w.onload=()=>{setTimeout(()=>w.print(),300);};
+}
+
+function downloadCover(){
+  if(!generatedCover){alert('No cover letter generated.');return;}
+  const blob=new Blob([generatedCover],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='MaDskillz_CoverLetter_'+new Date().toISOString().slice(0,10)+'.txt';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);document.body.removeChild(a);},3000);
+}
+
+function printCV(){
+  const content=document.getElementById('cvDoc').innerHTML;
+  const w=window.open('','_blank','width=900,height=700');
+  if(!w){alert('Pop-up blocked. Please allow pop-ups for this page.');return;}
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>CV Print</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,0,700;9..144,0,900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>body{font-family:'Plus Jakarta Sans',sans-serif;max-width:780px;margin:1.5rem auto;padding:1.5rem;color:#111;font-size:13px;line-height:1.65;}h2{font-family:'Fraunces',serif;font-size:1.8rem;border-bottom:3px solid #FF4500;padding-bottom:.3rem;margin-bottom:.5rem;}h3{font-family:'Fraunces',serif;color:#FF4500;text-transform:uppercase;letter-spacing:.09em;font-size:.8rem;margin-top:1.2rem;border-bottom:1px solid rgba(255,69,0,.12);padding-bottom:.18rem;}.cvSec{padding-left:.65rem;border-left:3px solid #FDE98A;margin-bottom:.45rem;}.cvBullet{display:block;padding:.08rem 0;}.cvContact{font-size:.75rem;color:#777;}.cvTarget{font-weight:700;color:#FF4500;font-size:.8rem;}hr{border:none;border-top:1px solid #eee;margin:.8rem 0;}</style>
+</head><body>${content}</body></html>`);
+  w.document.close();
+  w.onload=()=>w.print();
+}
+
+function resetCV(){
+  document.getElementById('cvDoc').style.display='none';
+  document.getElementById('coverDoc').style.display='none';
+  document.getElementById('cvActions').style.display='none';
+  document.getElementById('cvError').style.display='none';
+  document.getElementById('cvJobsResult').innerHTML='';
+  ['cvName','cvEmail','cvPhone','cvLoc','cvJobtitle','cvSkills','cvLinkedin','cvWeb'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  ['cvJd','cvExp','cvEdu'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  clearCVUpload();
+  generatedCV='';generatedCover='';
+  window.scrollTo({top:document.getElementById('sec-cv').offsetTop-80,behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+</script>
+</body>
+</html>
